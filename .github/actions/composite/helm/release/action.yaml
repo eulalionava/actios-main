@@ -114,7 +114,7 @@ runs:
             then HLMSCRIPT+="-f $TPLFILE ";
           fi
           echo "$HLMSCRIPT"
-          bash -c "$HLMSCRIPT" >/dev/null
+          bash -c "$HLMSCRIPT" 
         done
   
     - name: Release helm

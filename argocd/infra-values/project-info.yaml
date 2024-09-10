@@ -1,0 +1,44 @@
+nameOverride: ""
+fullnameOverride: ""
+extraLabels:
+  - app: PROJECT_KEY
+  - env: infra-dev
+crnamespace: PROJECT_KEY
+app:
+  destination:
+    namespace: PROJECT_KEY
+    server: 'https://kubernetes.default.svc'
+  project: default
+  type: helm
+  helm:
+    chart: helm-infra
+    url: http://20.118.83.132:8081/repository/helm/
+    revision: 0.0.5
+    values:
+      serviceAccount:
+        create: true
+        annotations: {}
+        name: "portales"
+        namespace: PROJECT_KEY
+        local: true
+      project:
+        create: "true"
+        name: "PROJECT_KEY"
+        display: "PROJECT_DESCRIPTION"
+        privileged: "true"
+      bindings:
+        create: "true"
+        list:
+        - name: secret-create
+          namespace: PROJECT_KEY
+          local: true
+          extraLabels: 
+            app: k8s-secrets-store
+          subjects:
+          - kind: ServiceAccount
+            name: secrets-store-csi-driver
+            namespace: k8s-secrets-store-csi
+          roleRef:
+            apiGroup: rbac.authorization.k8s.io
+            kind: ClusterRole
+            name: secret-create
