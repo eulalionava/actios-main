@@ -1,0 +1,17 @@
+
+{{- if .Values.project.create }}
+kind: Project
+apiVersion: project.openshift.io/v1
+metadata:
+  name: {{ .Values.project.name }}
+  labels:
+    # {{- include "helm-infra.labels" . | nindent 4 }}
+    argocd.argoproj.io/managed-by: openshift-gitops
+    {{- if .Values.project.privileged }}
+    pod-security.kubernetes.io/enforce: privileged
+    pod-security.kubernetes.io/enforce-version: v1.29
+    {{- end }}
+  annotations:
+    openshift.io/display-name: {{ .Values.project.display }}
+spec:
+{{- end }}

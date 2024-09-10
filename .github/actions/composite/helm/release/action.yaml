@@ -1,0 +1,136 @@
+name: "Deploy release to openshift"
+description: "Install, login to openshift, build and release"
+inputs:
+  helm-version:
+    description: "Helm version"
+    required: true
+    default: "v3.4.0"
+  helm-url:
+    description: ""
+    required: true
+    default: ""
+  helm-chart-repo:
+    description: ""
+    required: true
+    default: ""
+  helm-chart-name:
+    description: ""
+    required: true
+    default: ""
+  helm-chart-version:
+    description: ""
+    required: true
+    default: ""
+  helm-usr:
+    description: ""
+    required: true
+    default: ""
+  helm-pass:
+    description: ""
+    required: true
+    default: ""
+  openshift-server:
+    description: "Openshift Server URL"
+    required: true
+  openshift-token:
+    description: "Openshift Service Account Token"
+    required: true
+  openshift-namespace:
+    description: "Openshift Namespace"
+    required: false
+    default: "default"
+  openshift-version:
+    description: "Openshift Version"
+    required: false
+    default: "4.6"
+  additional-filter:
+    description: "optional App filter"
+    required: false
+    default: ""
+  values-files-location:
+    description: "Values initial file"
+    required: true
+    default: "./argocd/dev-values"
+  file-extension:
+    description: "Common file extension"
+    required: true
+    default: ".yaml"
+
+  include-tpl-files:
+    description: "Include tpl files (if any)"
+    required: false
+    type: boolean
+    default: true
+  tpl-file-extension:
+    description: "TPL file extension"
+    required: false
+    default: ".tpl"
+  env-suffix:
+    description: "Environment suffix"
+    required: true
+    default: "-dev"
+  additional-app-filter:
+    description: "Optional app filter"
+    required: false
+    default: ".yaml"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install Helm
+      uses: azure/setup-helm@v4
+      with:
+        version: ${{ inputs.helm-version }}
+    - name: Install oc
+      uses: redhat-actions/oc-installer@v1
+      with:
+        oc_version: ${{ inputs.openshift-version }}
+    - name: Authenticate and set context
+      uses: redhat-actions/oc-login@v1
+      with:
+        openshift_server_url: ${{ inputs.openshift-server }}
+        openshift_token: ${{ inputs.openshift-token }}
+        insecure_skip_tls_verify: true
+        namespace: ${{ inputs.openshift-namespace }}
+    - name: Add Nexus Repo
+      shell: bash
+      run: |
+        helm repo add ${{ inputs.helm-chart-repo }} ${{ inputs.helm-url }} \
+          --username ${{ inputs.helm-usr }} --password ${{ inputs.helm-pass }}
+    - name: Update repos Repo
+      shell: bash
+      run: |
+        helm repo update
+    - name: Build helm
+      shell: bash
+      run: |
+        cd ${{ inputs.values-files-location }}
+        for FILEE in $(ls | grep -e ${{ inputs.file-extension }} | grep -e ${{ inputs.additional-app-filter }} | grep -v ${{ inputs.tpl-file-extension }}); do 
+          TPLFILE="$(echo ${FILEE%%.*}${{ inputs.tpl-file-extension }}${{ inputs.file-extension }})"
+
+          HLMSCRIPT="helm template ${{ inputs.helm-chart-repo }}/${{ inputs.helm-chart-name }} "
+          HLMSCRIPT+="--version ${{ inputs.helm-chart-version }} --debug -f $FILEE "
+          if ${{ inputs.include-tpl-files }};
+            then HLMSCRIPT+="-f $TPLFILE ";
+          fi
+          echo "$HLMSCRIPT"
+          bash -c "$HLMSCRIPT" >/dev/null
+        done
+  
+    - name: Release helm
+      shell: bash
+      run: |
+        cd ${{ inputs.values-files-location }}
+        for FILEE in $(ls | grep -e ${{ inputs.file-extension }} | grep -e ${{ inputs.additional-app-filter }} | grep -v ${{ inputs.tpl-file-extension }}); do 
+          TPLFILE="$(echo ${FILEE%%.*}${{ inputs.tpl-file-extension }}${{ inputs.file-extension }})"
+
+          HLMSCRIPT="helm upgrade --insecure-skip-tls-verify -f $FILEE "
+          if ${{ inputs.include-tpl-files }};
+            then HLMSCRIPT+="-f $TPLFILE ";
+          fi 
+          HLMSCRIPT+="-n ${{ inputs.openshift-namespace }} "
+          HLMSCRIPT+="--debug --install --force --version ${{ inputs.helm-chart-version }} "
+          HLMSCRIPT+="${FILEE%%.*}${{ inputs.env-suffix }} ${{ inputs.helm-chart-repo }}/${{ inputs.helm-chart-name }} "
+          echo "$HLMSCRIPT"
+          bash -c "$HLMSCRIPT"
+        done

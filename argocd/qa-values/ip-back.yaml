@@ -1,0 +1,159 @@
+nameOverride: ""
+fullnameOverride: ""
+extraLabels:
+  - app: integracion-polizas
+  - env: qa
+crnamespace: openshift-gitops
+app:
+  destination:
+    namespace: admin-fin-qa
+    server: 'https://kubernetes.default.svc'
+  project: default
+  type: helm
+  helm:
+    chart: portales
+    url: http://20.118.83.132:8081/repository/helm/
+    revision: 0.1.9
+    values:
+      nameOverride: "integracion-polizas-backend-qa"
+      routeHostOverride: integracion-polizas-backend-qa-admin-fin-qa.apps.oxzaromdp01.southcentralus.aroapp.io
+      # horizontalPodAutoscaler:
+      #   create: true
+      #   minReplicas: 2
+      #   maxReplicas: 4
+      #   metrics:
+      #   - type: Resource
+      #     resource:
+      #       name: cpu
+      #       target:
+      #         averageUtilization: 70
+      #         type: Utilization
+      livenessProbe: 
+        tcpSocket:
+          port: 8080
+        initialDelaySeconds: 10
+        timeoutSeconds: 1
+        periodSeconds: 10
+        successThreshold: 1
+        failureThreshold: 3
+      readinessProbe:
+        httpGet:
+          path: /v3/api-docs
+          port: 8080
+          scheme: HTTP
+        initialDelaySeconds: 30
+        timeoutSeconds: 3
+        periodSeconds: 30
+        successThreshold: 1
+        failureThreshold: 3
+      env:
+        - name: FIN_MX_JDBC
+          valueFrom:
+            secretKeyRef:
+              key: FIN_MX_JDBC
+              name: integracion-polizas-secret
+        - name: FIN_MX_IPS_USER
+          valueFrom:
+            secretKeyRef:
+              key: FIN_MX_IPS_USER
+              name: integracion-polizas-secret
+        - name: FIN_MX_IPS_PASS
+          valueFrom:
+            secretKeyRef:
+              key: FIN_MX_IPS_PASS
+              name: integracion-polizas-secret
+        - name: FIN_COL_JDBC
+          valueFrom:
+            secretKeyRef:
+              key: FIN_COL_JDBC
+              name: integracion-polizas-secret
+        - name: FIN_COL_IPS_USER
+          valueFrom:
+            secretKeyRef:
+              key: FIN_COL_IPS_USER
+              name: integracion-polizas-secret
+        - name: FIN_COL_IPS_PASS
+          valueFrom:
+            secretKeyRef:
+              key: FIN_COL_IPS_PASS
+              name: integracion-polizas-secret
+        - name: FIN_IMM_JDBC
+          valueFrom:
+            secretKeyRef:
+              key: FIN_IMM_JDBC
+              name: integracion-polizas-secret
+        - name: FIN_IMM_IPS_USER
+          valueFrom:
+            secretKeyRef:
+              key: FIN_IMM_IPS_USER
+              name: integracion-polizas-secret
+        - name: FIN_IMM_IPS_PASS
+          valueFrom:
+            secretKeyRef:
+              key: FIN_IMM_IPS_PASS
+              name: integracion-polizas-secret
+        - name: AC_URL_BACK
+          valueFrom:
+            secretKeyRef:
+              key: AC_URL_BACK
+              name: integracion-polizas-secret
+        - name: IPS_APPID
+          valueFrom:
+            secretKeyRef:
+              key: IPS_APPID
+              name: integracion-polizas-secret
+        - name: IPS_URL_FRONT
+          valueFrom:
+            secretKeyRef:
+              key: IPS_URL_FRONT
+              name: integracion-polizas-secret
+      image:
+        repository: oxzacrmdps01.azurecr.io/oxzacrmdps01/integracion-polizas-back
+      replicaCount: 2
+      serviceAccount:
+        name: "default"
+      extraLabels:
+        - app.openshift.io/runtime: spring-boot
+        - app.kubernetes.io/part-of: integracion-polizas
+        - app.openshift.io/part-off: integracion-polizas
+      containerVolumes:
+        create: true
+        list:
+        - type: inline-secret-store
+          name: secrets-store-inline
+          readOnly: true
+          path: /mnt/secrets-store
+          secretProviderClass: ips-azure-kv
+          secretProviderCreds: ips-secrets-store-creds
+      secrets:
+        create: true
+        createProvider: true
+        list: []
+        providerRefs:
+        - objName: OXZKVSQ-FIN-MX-JDBC
+          key: FIN_MX_JDBC
+        - objName: OXZKVSQ-FIN-MX-IPS-USER
+          key: FIN_MX_IPS_USER
+        - objName: OXZKVSQ-FIN-MX-IPS-PASS
+          key: FIN_MX_IPS_PASS
+        - objName: OXZKVSQ-FIN-COL-JDBC
+          key: FIN_COL_JDBC
+        - objName: OXZKVSQ-FIN-COL-IPS-USER
+          key: FIN_COL_IPS_USER
+        - objName: OXZKVSQ-FIN-COL-IPS-PASS
+          key: FIN_COL_IPS_PASS
+        - objName: OXZKVSQ-FIN-IMM-JDBC
+          key: FIN_IMM_JDBC
+        - objName: OXZKVSQ-FIN-IMM-IPS-USER
+          key: FIN_IMM_IPS_USER
+        - objName: OXZKVSQ-FIN-IMM-IPS-PASS
+          key: FIN_IMM_IPS_PASS
+        - objName: OXZKVSQ-AC-URL-BACK
+          key: AC_URL_BACK
+        - objName: OXZKVSQ-IPS-APPID
+          key: IPS_APPID
+        - objName: OXZKVSQ-IPS-URL-FRONT
+          key: IPS_URL_FRONT
+        providerSecretName: integracion-polizas-secret
+        providerKeyvaultName: OXZKVMDPD01
+        providerClassName: ips-azure-kv

@@ -1,0 +1,6 @@
+---
+app:
+  helm:
+    params:
+      - name: image.tag
+        value: %FINAL_TAG%

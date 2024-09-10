@@ -1,0 +1,57 @@
+name: 'Build and Push Container Image'
+description: 'Build Container Image, login to Registry and push'
+inputs:
+
+  docker-registry:
+    description: "Docker Registry"
+    required: true
+  docker-username:
+    description: "Docker Username"
+    required: true
+  docker-password:
+    description: "Docker Password"
+    required: true
+
+  project-key:
+    description: ""
+    required: true
+  
+  docker-init-tag:
+    description: "Docker Tag"
+    required: false
+    default: "latest"
+  docker-next-tag:
+    description: "Docker Tag"
+    required: false
+    default: "latest"
+  docker-project:
+    description: "Docker project"
+    required: false
+    default: "oxzacrmdps01"
+runs:
+  using: "composite"
+  steps:
+      - name: Login to Input Registry
+        uses: redhat-actions/podman-login@v1.7
+        with:
+          registry: "${{ inputs.docker-registry }}"
+          username: "${{ inputs.docker-username }}"
+          password: "${{ inputs.docker-password }}"
+          logout: false
+      - name: Pull image and retag
+        shell: bash
+        run: |
+          podman pull ${{ inputs.docker-registry }}/${{ inputs.docker-project }}/${{ inputs.project-key }}:${{ inputs.docker-init-tag }}
+          podman tag \
+            ${{ inputs.docker-registry }}/${{ inputs.docker-project }}/${{ inputs.project-key }}:${{ inputs.docker-init-tag }} \
+            ${{ inputs.docker-registry }}/${{ inputs.docker-project }}/${{ inputs.project-key }}:${{ inputs.docker-next-tag }}
+
+      - name: Push
+        id: push-to-quay
+        uses: redhat-actions/push-to-registry@v2
+        with:
+          image: ${{ inputs.project-key }}
+          tags: ${{ inputs.docker-next-tag }}
+          registry: ${{ inputs.docker-registry }}/${{ inputs.docker-project }}
+          username: "${{ inputs.docker-username }}"
+          password: "${{ inputs.docker-password }}"

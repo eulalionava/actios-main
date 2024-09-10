@@ -1,0 +1,23 @@
+nameOverride: ""
+fullnameOverride: "azure-csi-provider"
+extraLabels:
+  - app: csi
+  - env: infra-prod
+crnamespace: openshift-gitops
+app:
+  destination:
+    namespace: k8s-secrets-store-csi
+    server: 'https://kubernetes.default.svc'
+  project: default
+  type: helm
+  autosync: true
+  helm:
+    chart: csi-secrets-store-provider-azure
+    revision: 1.5.6
+    url: 'https://azure.github.io/secrets-store-csi-driver-provider-azure/charts'
+    values:
+      linux:
+        privileged: true
+        providersDir: /var/run/secrets-store-csi-providers
+      secrets-store-csi-driver:
+        install: false

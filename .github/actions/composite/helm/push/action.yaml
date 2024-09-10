@@ -1,0 +1,40 @@
+name: 'Push helm to Nexus'
+description: 'Setup helm, build and push.'
+inputs:
+  helm-version:
+    description: "Helm version required"
+    required: true
+    default: 'v3.4.0'
+  helm-dir:
+    description: ""
+    required: true
+    default: './helm'
+  nexus-url:
+    description: ""
+    required: true
+  nexus-usr:
+    description: ""
+    required: true
+  nexus-pass:
+    description: ""
+    required: true
+runs:
+  using: "composite"
+  steps:
+    - name: Install Helm
+      uses: azure/setup-helm@v4
+      with:
+        version: ${{ inputs.helm-version }}
+    - name: Build helm
+      shell: bash
+      run: |
+        helm template ${{ inputs.helm-dir }} --debug
+        helm package ${{ inputs.helm-dir }}
+    - name: Set chart name
+      shell: bash
+      run: |
+        echo "FINAL_CHART_FILE_NAME=$(ls | grep '.tgz')" >> $GITHUB_ENV
+    - name: Push Helm
+      shell: bash
+      run: |
+        curl -u ${{ inputs.nexus-usr }}:${{ inputs.nexus-pass }} ${{ inputs.nexus-url }} --upload-file ${{ env.FINAL_CHART_FILE_NAME }}

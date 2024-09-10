@@ -1,0 +1,19 @@
+{{- $dot := . }}
+{{- if .Values.roles.create }}
+{{- range $r := .Values.roles.list }}
+---
+kind: ClusterRole
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: {{ $r.name }}
+  labels:
+    {{- with $r.extraLabels }}
+      {{ toYaml . | nindent 4 }}
+    {{- end}}
+{{- with $r.rules }}
+rules:
+{{- toYaml . | nindent 2 }}
+{{- end}}
+  
+{{- end }}
+{{- end }}

@@ -1,0 +1,35 @@
+name: 'Push to OCP'
+description: 'Create or replace yaml manifests to Openshift'
+inputs:
+  openshift-server:
+    description: "Openshift Server URL"
+    required: true
+  openshift-token:
+    description: "Openshift Service Account Token"
+    required: true
+  openshift-namespace:
+    description: "Openshift Namespace"
+    required: false
+    default: "default"
+  openshift-version:
+    description: "Openshift Version"
+    required: false
+    default: "4.12"
+  manifest-directory:
+    description: "Directory that contains manifests"
+    required: true
+    default: "."
+runs:
+  using: "composite"
+  steps:
+    - name: Install oc
+      uses: redhat-actions/oc-installer@v1
+      with:
+        oc_version: ${{ inputs.openshift-version }}
+    - name: Authenticate and set context
+      uses: redhat-actions/oc-login@v1
+      with:
+        openshift_server_url: ${{ inputs.openshift-server }}
+        openshift_token: ${{ inputs.openshift-token }}
+        insecure_skip_tls_verify: true
+        namespace: ${{ inputs.openshift-namespace }}

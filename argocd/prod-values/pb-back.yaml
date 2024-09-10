@@ -1,0 +1,122 @@
+nameOverride: ""
+fullnameOverride: ""
+extraLabels:
+  - app: personas-bloqueadas
+  - env: prod
+  - component: backend
+crnamespace: openshift-gitops
+app:
+  destination:
+    namespace: admin-fin
+    server: 'https://kubernetes.default.svc'
+  project: default
+  type: helm
+  helm:
+    chart: portales
+    url: http://20.118.83.132:8081/repository/helm/
+    revision: 0.1.9
+    values:
+        nameOverride: "lista-personas-bloqueadas-backend-prod"
+        fullnameOverride:  web-personas-bloqueadas-back-prod
+        routeHostOverride: lista-personas-bloqueadas-backend-prod-admin-fin.apps.oxzaromdpp01.southcentralus.aroapp.io
+        # horizontalPodAutoscaler:
+        #   create: true
+        #   minReplicas: 2
+        #   maxReplicas: 4
+        #   metrics:
+        #   - type: Resource
+        #     resource:
+        #       name: cpu
+        #       target:
+        #         averageUtilization: 70
+        #         type: Utilization
+        livenessProbe: 
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 10
+            timeoutSeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /v3/api-docs
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 30
+          timeoutSeconds: 3
+          periodSeconds: 30
+          successThreshold: 1
+          failureThreshold: 3
+        env:
+        - name: FCWSE_JDBC
+          valueFrom:
+            secretKeyRef:
+              name: personas-bloqueadas-secret
+              key: FCWSE_JDBC
+        - name: FCWSE_PB_PASS
+          valueFrom:
+            secretKeyRef:
+              name: personas-bloqueadas-secret
+              key: FCWSE_PB_PASS
+        - name: FCWSE_PB_USER
+          valueFrom:
+            secretKeyRef:
+              name: personas-bloqueadas-secret
+              key: FCWSE_PB_USER
+        - name: AC_URL_BACK
+          valueFrom:
+            secretKeyRef:
+              name: personas-bloqueadas-secret
+              key: AC_URL_BACK
+        - name: PB_APPID
+          valueFrom:
+            secretKeyRef:
+              name: personas-bloqueadas-secret
+              key: PB_APPID
+        - name: PB_URL_FRONT
+          valueFrom:
+            secretKeyRef:
+              name: personas-bloqueadas-secret
+              key: PB_URL_FRONT
+        image:
+          repository: oxzacrmdps01.azurecr.io/oxzacrmdps01/personas-bloqueadas-back
+        replicaCount: 2
+        serviceAccount:
+          name: "portales"
+        extraLabels:
+          - app.openshift.io/runtime: spring-boot
+          - app.kubernetes.io/part-of: personas-bloqueadas
+          - app.openshift.io/part-off: personas-bloqueadas
+          - portal: personas-bloqueadas
+          - env: prod
+          - component: backend
+        containerVolumes:
+          create: true
+          list:
+          - type: inline-secret-store
+            name: secrets-store-inline
+            readOnly: true
+            path: /mnt/secrets-store
+            secretProviderClass: pb-azure-kv
+            secretProviderCreds: pb-secrets-store-creds
+        secrets:
+          create: true
+          createProvider: true
+          list: []
+          providerRefs:
+          - objName: OXZKVSP-AC-URL-BACK
+            key: AC_URL_BACK
+          - objName: OXZKVSP-FCWSE-JDBC
+            key: FCWSE_JDBC
+          - objName: OXZKVSP-FCWSE-PB-PASS
+            key: FCWSE_PB_PASS
+          - objName: OXZKVSP-FCWSE-PB-USER
+            key: FCWSE_PB_USER
+          - objName: OXZKVSP-PB-APPID
+            key: PB_APPID
+          - objName: OXZKVSP-PB-URL-FRONT
+            key: PB_URL_FRONT
+          providerSecretName: personas-bloqueadas-secret
+          providerKeyvaultName: OXZKVMDPP01
+          providerClassName: pb-azure-kv

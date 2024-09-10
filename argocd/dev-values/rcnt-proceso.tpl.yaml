@@ -1,0 +1,11 @@
+app:
+  helm:
+    params:
+      - name: image.tag
+        value: %FINAL_TAG%
+      - name: configmaps.create
+        value: "true"
+      - name: configmaps.list[0].name
+        value: rcnt-proc-configmap
+      - name: configmaps.list[0].data.PORTAL_VERSION
+        value: %FINAL_TAG%

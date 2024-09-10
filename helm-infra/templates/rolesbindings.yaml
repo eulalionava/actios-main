@@ -1,0 +1,27 @@
+{{- $dot := . }}
+{{- if .Values.bindings.create }}
+{{- range $r := .Values.bindings.list }}
+---
+{{- if $r.local }}
+kind: RoleBinding
+{{- else }}
+kind: ClusterRoleBinding
+{{- end }}
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: {{ $r.name }}
+  {{- if $r.local }}
+  namespace: {{ $r.namespace }}
+  {{- end }}
+  labels:
+    {{- with $r.extraLabels }}
+      {{ toYaml . | nindent 4 }}
+    {{- end}}
+subjects:
+{{- toYaml $r.subjects | nindent 2 }}
+roleRef:
+  apiGroup: {{ $r.roleRef.apiGroup }}
+  kind: {{ $r.roleRef.kind }}
+  name: {{ $r.roleRef.name }}
+{{- end }}
+{{- end }}

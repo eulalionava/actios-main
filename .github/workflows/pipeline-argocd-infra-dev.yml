@@ -1,0 +1,106 @@
+name: Workflow Deploy Argo Infra DEV & QA
+on:
+  workflow_dispatch:
+    inputs:
+      oc-version:
+        description: ""
+        required: false
+        type: string
+        default: "4.6"
+
+  workflow_call:
+    inputs:
+      oc-version:
+        description: ""
+        required: false
+        type: string
+        default: "4.6"
+permissions: write-all
+jobs:
+  define-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      variables: ${{ steps.variables.outputs.variables }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - shell: bash
+        name: Get files as output
+        id: variables
+        run: |
+          cd ./argocd/infra-values
+          MATR="variables=["
+          for FILE in $(ls | grep '.tpl'); do
+            echo $FILE;
+            for VARIABLE in $(cat $FILE | grep '%' | awk '{print $2}'); do 
+              echo $VARIABLE;
+              SECR="$(echo $VARIABLE | tr -d '%')"
+              MATR+="\"$SECR\", "
+            done
+          done    
+          MATR+="]"
+          FINAL="$(echo $MATR | sed 's/, \]/\]/g')"
+          echo $FINAL
+          echo $FINAL >> "$GITHUB_OUTPUT"
+  replace-values:
+    runs-on: ubuntu-latest
+    needs: define-matrix
+    strategy:
+      max-parallel: 1
+      matrix:
+        secrts: ${{ fromJSON(needs.define-matrix.outputs.variables) }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: argocd-infra-replaced-secrets
+          path: "./argocd/infra-values"
+      - shell: bash
+        name: Replace
+        env:
+          SECRET_NAME: ${{ matrix.secrts }}
+        run: |
+          cd ./argocd/infra-values
+          for FILE in $(ls | grep '.tpl'); do
+            SECRETNAME="${{ env.SECRET_NAME }}"
+            SECRETCONTENT="${{ secrets[env.SECRET_NAME] }}"
+            REPLACENAME="%$SECRETNAME%"
+
+            if [ -z "${SECRETCONTENT}" ]; then exit 1; fi
+            sed -i $FILE -e "s/$REPLACENAME/$SECRETCONTENT/g"
+          done
+      - uses: actions/upload-artifact@v4
+        with:
+          name: argocd-infra-replaced-secrets
+          path: "./argocd/infra-values"
+          overwrite: true
+  helm:
+    name: Pipeline Infra, deploy ArgoCD Infra Apps to OCP
+    runs-on: GJAR
+    needs:
+      - define-matrix
+      - replace-values
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: argocd-infra-replaced-secrets
+          path: "./argocd/infra-values"
+      - name: Helm release to openshift
+        uses: BUS-BackOffice/WEB_GJAR_RH/.github/actions/composite/helm/release@main
+        with:
+          helm-url: ${{ secrets.JAR_NEXUS_URL }}
+          helm-chart-repo: nexus
+          helm-chart-name: argo-app
+          helm-chart-version: "0.0.3"
+          helm-usr: ${{ secrets.JAR_NEXUS_USR }}
+          helm-pass: ${{ secrets.JAR_NEXUS_PASS }}
+          openshift-server: ${{ secrets.JAR_OPENSHIFT_URL_DEV }}
+          openshift-token: ${{ secrets.JAR_OPENSHIFT_URL_TOKEN_DEV }}
+          openshift-namespace: openshift-gitops
+          values-files-location: "./argocd/infra-values"
+          include-tpl-files: true
+          env-suffix: "-dev"

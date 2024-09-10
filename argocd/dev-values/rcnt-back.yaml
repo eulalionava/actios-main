@@ -1,0 +1,127 @@
+nameOverride: ""
+fullnameOverride: ""
+extraLabels:
+  - app: reportes-cnt
+  - env: dev
+  - component: backend
+crnamespace: openshift-gitops
+app:
+  destination:
+    namespace: admin-fin
+    server: 'https://kubernetes.default.svc'
+  project: default
+  type: helm
+  autosync: true
+  helm:
+    chart: portales
+    url: http://20.118.83.132:8081/repository/helm/
+    revision: 0.1.9
+    values:
+        nameOverride: "reportes-cnt-backend-dev"
+        routeHostOverride: reportes-cnt-backend-dev-admin-fin.apps.oxzaromdp01.southcentralus.aroapp.io
+        # horizontalPodAutoscaler:
+        #   create: true
+        #   minReplicas: 2
+        #   maxReplicas: 4
+        #   metrics:
+        #   - type: Resource
+        #     resource:
+        #       name: cpu
+        #       target:
+        #         averageUtilization: 70
+        #         type: Utilization
+        livenessProbe: 
+            tcpSocket:
+              port: 8080
+            initialDelaySeconds: 10
+            timeoutSeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /v3/api-docs
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 30
+          timeoutSeconds: 3
+          periodSeconds: 30
+          successThreshold: 1
+          failureThreshold: 3
+        env:
+          - name: PORTAL_VERSION
+            valueFrom:
+              configMapKeyRef:
+                name: rcnt-back-configmap
+                key: PORTAL_VERSION
+          - name: FCIAS_JDBC
+            valueFrom:
+              secretKeyRef:
+                key: FCIAS_JDBC
+                name: reportes-cnt-secret
+          - name: FCIAS_RCNT_USER
+            valueFrom:
+              secretKeyRef:
+                key: FCIAS_RCNT_USER
+                name: reportes-cnt-secret
+          - name: FCIAS_RCNT_PASS
+            valueFrom:
+              secretKeyRef:
+                key: FCIAS_RCNT_PASS
+                name: reportes-cnt-secret
+          - name: AC_URL_BACK
+            valueFrom:
+              secretKeyRef:
+                key: AC_URL_BACK
+                name: reportes-cnt-secret
+          - name: RCNT_APPID
+            valueFrom:
+              secretKeyRef:
+                key: RCNT_APPID
+                name: reportes-cnt-secret
+          - name: RCNT_URL_FRONT
+            valueFrom:
+              secretKeyRef:
+                name: reportes-cnt-secret
+                key: RCNT_URL_FRONT
+        image:
+          repository: oxzacrmdps01.azurecr.io/oxzacrmdps01/reportes-cnt-back
+        replicaCount: 2
+        serviceAccount:
+          name: "default"
+        extraLabels:
+          - app.openshift.io/runtime: spring-boot
+          - app.kubernetes.io/part-of: reportes-cnt
+          - app.openshift.io/part-off: reportes-cnt
+          - portal: reportes-cnt
+          - env: dev
+          - component: backend
+        containerVolumes:
+          create: true
+          list:
+          - type: inline-secret-store
+            name: secrets-store-inline
+            readOnly: true
+            path: /mnt/secrets-store
+            secretProviderClass: rcnt-azure-kv
+            secretProviderCreds: rcnt-secrets-store-creds
+        secrets:
+          create: true
+          createProvider: true
+          list: []
+          providerRefs:
+          - objName: OXZKVSD-FCIAS-JDBC
+            key: FCIAS_JDBC
+          - objName: OXZKVSD-FCIAS-RCNT-USER
+            key: FCIAS_RCNT_USER
+          - objName: OXZKVSD-FCIAS-RCNT-PASS
+            key: FCIAS_RCNT_PASS
+          - objName: OXZKVSD-AC-URL-BACK
+            key: AC_URL_BACK
+          - objName: OXZKVSD-RCNT-APPID
+            key: RCNT_APPID
+          - objName: OXZKVSD-RCNT-URL-FRONT
+            key: RCNT_URL_FRONT
+          providerSecretName: reportes-cnt-secret
+          providerKeyvaultName: OXZKVMDPD01
+          providerClassName: rcnt-azure-kv
