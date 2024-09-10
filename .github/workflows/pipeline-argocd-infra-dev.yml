@@ -78,7 +78,7 @@ jobs:
           SECRET_NAME: ${{ matrix.secrts }}
         run: |
           cd ./argocd/infra-values
-          for FILE in $(ls | grep 'project-info.yaml'); do
+          for FILE in $(ls | grep '.yaml'); do
             echo "Remplazando PROJECT_KEY: ${{ inputs.project-key }}"
             sed -i $FILE -e "s/PROJECT_KEY/${{ inputs.project-key }}/g"
             echo "Remplazando PROJECT_DESCRIPTION: ${{ inputs.project-description }}"
@@ -108,7 +108,7 @@ jobs:
           helm-url: ${{ secrets.JAR_NEXUS_URL }}
           helm-chart-repo: nexus
           helm-chart-name: argo-app
-          helm-chart-version: "0.0.3"
+          helm-chart-version: "0.0.4"
           helm-usr: ${{ secrets.JAR_NEXUS_USR }}
           helm-pass: ${{ secrets.JAR_NEXUS_PASS }}
           openshift-server: ${{ secrets.JAR_OPENSHIFT_URL_DEV }}
@@ -117,3 +117,4 @@ jobs:
           values-files-location: "./argocd/infra-values"
           include-tpl-files: true
           env-suffix: "-dev"
+          project-key: ${{ inputs.project-key }}
