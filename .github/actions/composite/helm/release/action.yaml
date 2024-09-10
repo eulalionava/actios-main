@@ -134,7 +134,7 @@ runs:
           fi 
           HLMSCRIPT+="-n ${{ inputs.openshift-namespace }} "
           HLMSCRIPT+="--debug --install --force --version ${{ inputs.helm-chart-version }} "
-          HLMSCRIPT+="${{ inputs.project-key }} ${{ inputs.helm-chart-repo }}/${{ inputs.helm-chart-name }} "
+          HLMSCRIPT+="${{ inputs.project-key }}${{ inputs.env-suffix }} ${{ inputs.helm-chart-repo }}/${{ inputs.helm-chart-name }} "
           echo "$HLMSCRIPT"
           bash -c "$HLMSCRIPT"
         done

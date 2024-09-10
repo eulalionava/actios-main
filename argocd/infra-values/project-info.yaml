@@ -10,6 +10,7 @@ app:
     server: 'https://kubernetes.default.svc'
   project: default
   type: helm
+  autosync: true
   helm:
     chart: helm-infra
     url: http://20.118.83.132:8081/repository/helm/
