@@ -24,7 +24,7 @@ app:
       project:
         create: "true"
         name: "inventario-espacios"
-        display: "Recursos Humanos"
+        display: "Inventario Espacios Modernizacion"
         privileged: "true"
       bindings:
         create: "true"

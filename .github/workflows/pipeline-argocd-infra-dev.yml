@@ -1,4 +1,4 @@
-name: Workflow Deploy Argo Infra DEV & QA
+name: Deploy Argo Infra 
 on:
   workflow_dispatch:
     inputs:
@@ -7,14 +7,15 @@ on:
         required: false
         type: string
         default: "4.6"
-
-  workflow_call:
-    inputs:
-      oc-version:
-        description: ""
-        required: false
+      project-key:
+        description: "Identificado del proyecto(namespace dentro del cluster ARO)"
+        required: true
         type: string
-        default: "4.6"
+      project-description:
+        description: "Una breve descripción del proyecto"
+        required: true
+        type: string
+
 permissions: write-all
 jobs:
   define-matrix:
