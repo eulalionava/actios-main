@@ -55,7 +55,6 @@ inputs:
     description: "Common file extension"
     required: true
     default: ".yaml"
-
   include-tpl-files:
     description: "Include tpl files (if any)"
     required: false
@@ -73,7 +72,10 @@ inputs:
     description: "Optional app filter"
     required: false
     default: ".yaml"
-
+  project-key:
+    description: "Identificador del proyecto"
+    required: true
+    default: "project-info"
 runs:
   using: "composite"
   steps:
@@ -104,6 +106,7 @@ runs:
     - name: Build helm
       shell: bash
       run: |
+        echo " Input Files Location: ${{ inputs.values-files-location }}"
         cd ${{ inputs.values-files-location }}
         for FILEE in $(ls | grep -e ${{ inputs.file-extension }} | grep -e ${{ inputs.additional-app-filter }} | grep -v ${{ inputs.tpl-file-extension }}); do 
           TPLFILE="$(echo ${FILEE%%.*}${{ inputs.tpl-file-extension }}${{ inputs.file-extension }})"
@@ -120,6 +123,7 @@ runs:
     - name: Release helm
       shell: bash
       run: |
+        echo " Input Files Location: ${{ inputs.values-files-location }}"
         cd ${{ inputs.values-files-location }}
         for FILEE in $(ls | grep -e ${{ inputs.file-extension }} | grep -e ${{ inputs.additional-app-filter }} | grep -v ${{ inputs.tpl-file-extension }}); do 
           TPLFILE="$(echo ${FILEE%%.*}${{ inputs.tpl-file-extension }}${{ inputs.file-extension }})"
@@ -130,7 +134,7 @@ runs:
           fi 
           HLMSCRIPT+="-n ${{ inputs.openshift-namespace }} "
           HLMSCRIPT+="--debug --install --force --version ${{ inputs.helm-chart-version }} "
-          HLMSCRIPT+="${FILEE%%.*}${{ inputs.env-suffix }} ${{ inputs.helm-chart-repo }}/${{ inputs.helm-chart-name }} "
+          HLMSCRIPT+="${{ inputs.project-key }} ${{ inputs.helm-chart-repo }}/${{ inputs.helm-chart-name }} "
           echo "$HLMSCRIPT"
           bash -c "$HLMSCRIPT"
         done
