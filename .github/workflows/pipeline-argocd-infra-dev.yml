@@ -78,9 +78,11 @@ jobs:
           SECRET_NAME: ${{ matrix.secrts }}
         run: |
           cd ./argocd/infra-values
-          for FILE in $(ls | grep '.tpl'); do
-            sed -i $FILE -e "s/PROJECT_KEY/${{ inputs.project-key }} /g"
-            sed -i $FILE -e "s/PROJECT_DESCRIPTION/${{ inputs.project-description }} /g"
+          for FILE in $(ls | grep 'project-info.yaml'); do
+            echo "Remplazando PROJECT_KEY: ${{ inputs.project-key }}"
+            sed -i $FILE -e "s/PROJECT_KEY/${{ inputs.project-key }}/g"
+            echo "Remplazando PROJECT_DESCRIPTION: ${{ inputs.project-description }}"
+            sed -i $FILE -e "s/PROJECT_DESCRIPTION/${{ inputs.project-description }}/g"
           done
       - uses: actions/upload-artifact@v4
         with:
@@ -101,7 +103,7 @@ jobs:
           name: argocd-infra-replaced-secrets
           path: "./argocd/infra-values"
       - name: Helm release to openshift
-        uses: BUS-BackOffice/WEB_GJAR_RH/.github/actions/composite/helm/release@main
+        uses: BUS-BackOffice/WEB_CI_CD_F2OXXO/.github/actions/composite/helm/release@develop
         with:
           helm-url: ${{ secrets.JAR_NEXUS_URL }}
           helm-chart-repo: nexus
