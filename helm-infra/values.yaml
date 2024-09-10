@@ -1,0 +1,44 @@
+project:
+  create: false
+  name: ""
+  display: ""
+  privileged: false
+roles:
+  create: false
+  list:
+  - name:
+    extraLabels: []
+    rules: []
+    # - verbs:
+    #     - list
+    #   apiGroups:
+    #     - ''
+    #   resources:
+    #     - secrets
+bindings:
+  create: false
+  list:
+  - name: 
+    namespace: 
+    extraLabels: []
+      # - app: k8s-secrets-store
+    subjects: []
+    roleRef:
+      apiGroup: rbac.authorization.k8s.io
+      kind: ""
+      name: ""
+secrets:
+  create: false
+  list: []
+  # - name:
+  #   namespace:
+  #   assignSecret: "false"
+  #   assignPull: "false"
+  #   type:
+  #   data:
+serviceAccount:
+  create: false
+  annotations: {}
+  name: ""
+  namespace: ""
+  local: true

@@ -1,0 +1,54 @@
+# JAR_AZURE_KEYVAULT_CREDENTIALS
+name: 'Keyvault keys'
+description: 'Login and download keys from Azure Keyvault as environmental values.'
+inputs:
+  keyvault-name:
+    description: "Keyvault name"
+    required: true
+  keyvault-secret-list:
+    description: "Space separated key names"
+    required: true
+  keyvault-prefix:
+    description: "Prefix name for variables"
+    required: false
+  azure-creds:
+    description: "Azure credentials for keyvault"
+    required: false
+  azure-client-id:
+    description: "Azure credentials for keyvault (clientid)"
+    required: false
+  azure-client-secret:
+    description: "Azure credentials for keyvault (secretid)"
+    required: false
+  azure-tenant-id:
+    description: "Azure credentials for keyvault (tenantid)"
+    required: false
+runs:
+  using: "composite"
+  steps:
+    - name: Get Keyvault secrets (remove prefix)
+      shell: bash
+      run: |
+        AZURECLIENTID=""
+        AZURECLIENTSECRET=""
+        AZURETENANTID=""
+
+        if [ ! -z "${{ inputs.azure-creds }}" ]; then
+        cat <<EOF >creds.txt
+          ${{ inputs.azure-creds }}
+        EOF
+        AZURECLIENTID="$(cat creds.txt | jq -r ".clientId")"
+        AZURECLIENTSECRET="$(cat creds.txt | jq -r ".clientSecret")"
+        AZURETENANTID="$(cat creds.txt | jq -r ".tenantId")"
+        else
+        AZURECLIENTID="${{ inputs.azure-client-id }}"
+        AZURECLIENTSECRET="${{ inputs.azure-client-secret }}"
+        AZURETENANTID="${{ inputs.azure-tenant-id }}"
+        fi
+        echo "az login --service-principal -u $AZURECLIENTID -p $AZURECLIENTSECRET --tenant $AZURETENANTID"
+
+        az login --service-principal -u $AZURECLIENTID -p $AZURECLIENTSECRET --tenant $AZURETENANTID
+        for KEY in $(echo "${{ inputs.keyvault-secret-list }}"); do
+          az keyvault secret show --vault-name ${{ inputs.keyvault-name }} -n $KEY
+          echo "$(echo $KEY | sed 's/${{ inputs.keyvault-prefix }}//g' | sed 's/-/_/g')=$(az keyvault secret show --vault-name ${{ inputs.keyvault-name }} -n $KEY --query 'value' | tr -d '"')" >> $GITHUB_ENV
+        done

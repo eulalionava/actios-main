@@ -1,0 +1,29 @@
+
+name: 'ACR get latest'
+description: 'Login and get latest tag filtered by prefix'
+inputs:
+  acr-name:
+    description: "ACR name"
+    required: true
+  acr-repo-name:
+    description: "ACR name"
+    required: true
+  environment-prefix:
+    description: "Env name for variable"
+    required: true
+  azure-creds:
+    required: true
+    description: "Azure credentials for keyvault"
+runs:
+  using: "composite"
+  steps:
+    - name: Get Keyvault secrets (remove prefix)
+      shell: bash
+      run: |
+        cat <<EOF >creds.txt
+        ${{ inputs.azure-creds }}
+        EOF
+        az login --service-principal -u $(cat creds.txt | jq -r ".clientId") -p $(cat creds.txt | jq -r ".clientSecret") --tenant $(cat creds.txt | jq -r ".tenantId")
+        JQSCRIPT=". | [map({name, originaldate: .lastUpdateTime, date: (.lastUpdateTime | sub(\"\\\\.[0-9]+Z$\";\"Z\") | fromdate | tonumber)}) | .[] | select(.name | startswith(\"${{ inputs.environment-prefix }}\"))] | sort_by(.date) | last"
+        az acr repository show-tags -n ${{ inputs.acr-name }} --repository ${{ inputs.acr-name }}/${{ inputs.acr-repo-name }} --detail | jq "$JQSCRIPT" > result.json
+        echo "FINALTAG=$(cat result.json | jq -r '.name')" >> $GITHUB_ENV

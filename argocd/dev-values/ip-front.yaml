@@ -1,0 +1,61 @@
+nameOverride: ""
+fullnameOverride: ""
+extraLabels:
+  - app: integracion-polizas
+  - env: dev
+  - component: frontend
+crnamespace: openshift-gitops
+app:
+  destination:
+    namespace: admin-fin
+    server: 'https://kubernetes.default.svc'
+  project: default
+  type: helm
+  helm:
+    chart: portales
+    url: http://20.118.83.132:8081/repository/helm/
+    revision: 0.1.9
+    values:
+      nameOverride: "integracion-polizas-frontend-dev"
+      routeHostOverride: integracion-polizas-frontend-dev-admin-fin.apps.oxzaromdp01.southcentralus.aroapp.io
+      image:
+        repository: oxzacrmdps01.azurecr.io/oxzacrmdps01/integracion-polizas-front
+      replicaCount: 2
+      livenessProbe: 
+          tcpSocket:
+            port: 8080
+          initialDelaySeconds: 10
+          timeoutSeconds: 1
+          periodSeconds: 10
+          successThreshold: 1
+          failureThreshold: 3
+      readinessProbe: 
+          httpGet:
+            path: /
+            port: 8080
+            scheme: HTTP
+          initialDelaySeconds: 20
+          timeoutSeconds: 1
+          periodSeconds: 10
+          successThreshold: 1
+          failureThreshold: 3
+      # horizontalPodAutoscaler:
+      #   create: true
+      #   minReplicas: 2
+      #   maxReplicas: 4
+      #   metrics:
+      #   - type: Resource
+      #     resource:
+      #       name: cpu
+      #       target:
+      #         averageUtilization: 70
+      #         type: Utilization
+      serviceAccount:
+        name: "default"
+      extraLabels:
+        - app.openshift.io/runtime: nginx
+        - app.kubernetes.io/part-of: integracion-polizas
+        - app.openshift.io/part-off: integracion-polizas
+        - portal: integracion-polizas
+        - env: dev
+        - component: frontend

@@ -1,0 +1,44 @@
+nameOverride: ""
+fullnameOverride: ""
+extraLabels:
+  - app: rec-hum
+  - env: infra-prod
+crnamespace: openshift-gitops
+app:
+  destination:
+    namespace: openshift-gitops
+    server: 'https://kubernetes.default.svc'
+  project: default
+  type: helm
+  helm:
+    chart: helm-infra
+    url: http://20.118.83.132:8081/repository/helm/
+    revision: 0.0.5
+    values:
+      serviceAccount:
+        create: true
+        annotations: {}
+        name: "portales"
+        namespace: rec-hum
+        local: true
+      project:
+        create: "true"
+        name: "rec-hum"
+        display: "Recursos Humanos"
+        privileged: "true"
+      bindings:
+        create: "true"
+        list:
+        - name: secret-create
+          namespace: rec-hum
+          local: true
+          extraLabels: 
+            app: k8s-secrets-store
+          subjects:
+          - kind: ServiceAccount
+            name: secrets-store-csi-driver
+            namespace: k8s-secrets-store-csi
+          roleRef:
+            apiGroup: rbac.authorization.k8s.io
+            kind: ClusterRole
+            name: secret-create
