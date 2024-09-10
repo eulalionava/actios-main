@@ -1,7 +1,7 @@
 nameOverride: ""
 fullnameOverride: ""
 extraLabels:
-  - app: inventario-espacios
+  - app: PROJECT_KEY
   - env: infra-dev
 crnamespace: openshift-gitops
 app:
@@ -19,18 +19,18 @@ app:
         create: true
         annotations: {}
         name: "portales"
-        namespace: inventario-espacios
+        namespace: PROJECT_KEY
         local: true
       project:
         create: "true"
-        name: "inventario-espacios"
-        display: "Inventario Espacios Modernizacion"
+        name: "PROJECT_KEY"
+        display: "PROJECT_DESCRIPTION"
         privileged: "true"
       bindings:
         create: "true"
         list:
         - name: secret-create
-          namespace: inventario-espacios
+          namespace: PROJECT_KEY
           local: true
           extraLabels: 
             app: k8s-secrets-store
@@ -42,3 +42,19 @@ app:
             apiGroup: rbac.authorization.k8s.io
             kind: ClusterRole
             name: secret-create
+    params:
+      - name: secrets.create
+        value: "true"
+      - name: secrets.list[0].name
+        value: azure-cr
+      - name: secrets.list[0].namespace
+        value: PROJECT_KEY
+      - name: secrets.list[0].assignSecret
+        value: "false"
+      - name: secrets.list[0].assignPull
+        value: "true"
+      - name: secrets.list[0].type
+        value: kubernetes.io/dockerconfigjson
+      - name: 'secrets.list[0].data.\.dockerconfigjson'
+        value: %JAR_AZURE_CR_DOCKERCONFIG_DEV%
+        forceString: true
