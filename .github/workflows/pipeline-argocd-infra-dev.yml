@@ -72,6 +72,16 @@ jobs:
             if [ -z "${SECRETCONTENT}" ]; then exit 1; fi
             sed -i $FILE -e "s/$REPLACENAME/$SECRETCONTENT/g"
           done
+      - shell: bash
+        name: Replace Input Project Info
+        env:
+          SECRET_NAME: ${{ matrix.secrts }}
+        run: |
+          cd ./argocd/infra-values
+          for FILE in $(ls | grep '.tpl'); do
+            sed -i $FILE -e "s/PROJECT_KEY/${{ inputs.project-key }} /g"
+            sed -i $FILE -e "s/PROJECT_DESCRIPTION/${{ inputs.project-description }} /g"
+          done
       - uses: actions/upload-artifact@v4
         with:
           name: argocd-infra-replaced-secrets
