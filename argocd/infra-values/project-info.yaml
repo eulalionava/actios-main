@@ -3,10 +3,10 @@ fullnameOverride: ""
 extraLabels:
   - app: PROJECT_KEY
   - env: infra-dev
-crnamespace: PROJECT_KEY
+crnamespace: openshift-gitops
 app:
   destination:
-    namespace: PROJECT_KEY
+    namespace: openshift-gitops
     server: 'https://kubernetes.default.svc'
   project: default
   type: helm
