@@ -1,0 +1,101 @@
+name: Workflow Deploy Argo apps DEV
+on:
+  workflow_call:
+    secrets:
+      helm-url:
+        required: true
+      helm-usr:
+        required: true
+      helm-pass:
+        required: true
+      openshift-server:
+        required: true
+      openshift-token:
+        required: true
+      github-token:
+        required: true
+    inputs:
+      oc-version:
+        description: ""
+        required: false
+        type: string
+        default: "4.6"
+      env-dir:
+        description: ""
+        required: true
+        type: string
+        default: dev-
+      app-file-name:
+        description: "Name describing the app"
+        required: true
+        type: string
+      helm-chart-repo:
+        description: ""
+        required: false
+        default: nexus
+        type: string
+      helm-chart-name:
+        description: ""
+        required: false
+        default: argo-app
+        type: string
+      helm-chart-version:
+        description: ""
+        required: false
+        default: "0.0.3"
+        type: string
+      env-suffix:
+        description: ""
+        required: false
+        default: "-dev"
+        type: string
+      openshift-namespace:
+        description: ""
+        required: false
+        default: openshift-gitops
+        type: string
+      docker-final-tag:
+        description: ""
+        required: false
+        type: string
+      artifact-name:
+        description: ""
+        required: false
+        type: string
+      
+permissions: write-all
+jobs:
+  helm:
+    name: Pipeline Infra, deploy ArgoCD Apps to OCP
+    runs-on: GJAR
+    env:
+      base-dir: ./argocd/${{ inputs.env-dir }}values
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          repository: BUS-BackOffice/WEB_CI_CD_F2OXXO
+          ref: develop
+          token: ${{ secrets.github-token }}
+      - uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.artifact-name }}
+          path: ${{ env.base-dir }}
+      - name: Helm release to openshift
+        uses: BUS-BackOffice/WEB_CI_CD_F2OXXO/.github/actions/composite/helm/release@develop
+        with:
+          additional-app-filter: ${{ inputs.app-file-name }}
+          values-files-location: ${{ env.base-dir }}
+          include-tpl-files: true
+
+          helm-chart-repo: ${{ inputs.helm-chart-repo }}
+          helm-chart-name: ${{ inputs.helm-chart-name }}
+          helm-chart-version: ${{ inputs.helm-chart-version}}
+          env-suffix: ${{ inputs.env-suffix}}
+          openshift-namespace: ${{ inputs.openshift-namespace}}
+
+          helm-url: ${{ secrets.helm-url }}
+          helm-usr: ${{ secrets.helm-usr }}
+          helm-pass: ${{ secrets.helm-pass }}
+          openshift-server: ${{ secrets.openshift-server }}
+          openshift-token: ${{ secrets.openshift-token }}

@@ -1,0 +1,68 @@
+name: Workflow Deploy Argo apps DEV
+on:
+  workflow_call:
+    secrets:
+      secret-content:
+        required: true
+      github-token:
+        required: true
+    inputs:
+      secret-name:
+        required: true
+        type: string
+      env-dir:
+        description: ""
+        required: true
+        type: string
+        default: dev-
+      app-file-name:
+        description: "Name describing the app"
+        required: true
+        type: string
+      docker-final-tag:
+        description: ""
+        required: false
+        type: string
+      artifact-name:
+        description: ""
+        required: false
+        type: string
+      
+permissions: write-all
+jobs:
+  replace-values:
+    runs-on: ubuntu-latest
+    env:
+      base-dir: ./argocd/${{ inputs.env-dir }}values
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          repository: BUS-BackOffice/WEB_CI_CD_F2OXXO
+          ref: develop
+          token: ${{ secrets.github-token }}
+      - uses: actions/download-artifact@v4
+        continue-on-error: true
+        with:
+          name: argocd-replaced-secrets
+          path: ${{ env.base-dir }}
+      - shell: bash
+        name: Replace
+        run: |
+          cd ${{ env.base-dir }}
+          for FILE in $(ls | grep '.tpl' | grep ${{ inputs.app-file-name }}); do
+            SECRETNAME="${{ inputs.secret-name }}"
+            SECRETCONTENT="${{ secrets.secret-content }}"
+            if [ "$SECRETNAME" = "FINAL_TAG" ];
+              then SECRETCONTENT="${{ inputs.docker-final-tag }}";
+            fi
+            REPLACENAME="%$SECRETNAME%"
+
+            if [ -z "${SECRETCONTENT}" ]; then exit 1; fi
+            sed -i $FILE -e "s/$REPLACENAME/$SECRETCONTENT/g"
+          done
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.artifact-name }}
+          path: ${{ env.base-dir }}
+          overwrite: true
