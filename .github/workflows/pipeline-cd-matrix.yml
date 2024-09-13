@@ -1,0 +1,54 @@
+name: Workflow Generate Matrix (CD part 1)
+on:
+  workflow_call:
+    secrets:
+      github-token:
+        required: true
+    inputs:
+      env-dir:
+        description: ""
+        required: true
+        type: string
+        default: dev-
+      app-file-name:
+        description: "Name describing the app"
+        required: true
+        type: string
+    outputs:
+      variables: 
+        description: "Matrix variables"
+        value: ${{ jobs.define-matrix.outputs.variables }}
+      
+permissions: write-all
+jobs:
+  define-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      variables: ${{ steps.variables.outputs.variables }}
+    env:
+      base-dir: ./argocd/${{ inputs.env-dir }}values
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          repository: BUS-BackOffice/WEB_CI_CD_F2OXXO
+          ref: develop
+          token: ${{ secrets.github-token }}
+      - shell: bash
+        name: Get files as output
+        id: variables
+        run: |
+          cd ${{ env.base-dir }}
+          MATR="variables=["
+          for FILE in $(ls | grep '.tpl' | grep ${{ inputs.app-file-name }}); do
+            echo $FILE;
+            for VARIABLE in $(cat $FILE | grep '%' | awk '{print $2}'); do 
+              echo $VARIABLE;
+              SECR="$(echo $VARIABLE | tr -d '%')"
+              MATR+="\"$SECR\", "
+            done
+          done    
+          MATR+="]"
+          FINAL="$(echo $MATR | sed 's/, \]/\]/g')"
+          echo $FINAL
+          echo $FINAL >> "$GITHUB_OUTPUT"

@@ -1,0 +1,80 @@
+name: Workflow Pipeline CI Backend
+on:
+  workflow_call:
+    inputs:
+      docker-init-tag-prefix:
+        description: "Docker Init Tag Prefix"
+        required: true
+        type: string
+        default: dev-
+      docker-next-tag-prefix:
+        description: "Docker Next Tag Prefix"
+        required: true
+        type: string
+        default: qa-
+      project-key:
+        description: "Project key, names the image name in ACR"
+        required: true
+        type: string
+        default: ""
+      acr-name: # new
+        description: "Name ACR"
+        required: true
+        type: string
+        default: ""
+    secrets:
+      docker-registry:
+        description: "login registry for pull/push images"
+        required: true
+      docker-username:
+        description: "login username for pull/push images"
+        required: true
+      docker-password:
+        description: "login password for pull/push images"
+        required: true
+      azure-creds: # new
+        description: "Credentials for azure"
+        required: true
+    outputs:
+      docker-final-tag: 
+        description: "Final Tag"
+        value: ${{ jobs.pipeline-ci.outputs.docker-final-tag }}
+
+permissions: write-all
+jobs:
+  not-skip-all:
+    runs-on: ubuntu-latest
+    steps:
+    - run: echo "Avoid skipping everything"
+  pipeline-ci:
+    name: Pipeline CI Backend java
+    if: contains(fromJson('["qa-", "prod-"]'), inputs.docker-next-tag-prefix)
+    runs-on: ubuntu-latest
+    outputs:
+      docker-final-tag: ${{ steps.out.outputs.docker-final-tag }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - name: Get previous tag
+        uses: BUS-BackOffice/WEB_CI_CD_F2OXXO/.github/actions/composite/azure/acr@develop
+        id: sha
+        with:
+          acr-name: ${{ inputs.acr-name }}
+          acr-repo-name: ${{ inputs.project-key }}
+          azure-creds: ${{ secrets.azure-creds }}
+          environment-prefix: ${{ inputs.docker-init-tag-prefix }}
+      - name: Get SHA
+        id: sha-short
+        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+      - name: Docker Push
+        uses: BUS-BackOffice/WEB_CI_CD_F2OXXO/.github/actions/composite/common/docker-retag@develop
+        with:
+          project-key: ${{ inputs.project-key }}
+          docker-registry: ${{ secrets.docker-registry }}
+          docker-username: ${{ secrets.docker-username }}
+          docker-password: ${{ secrets.docker-password }}
+          docker-init-tag: ${{ env['FINALTAG'] }}
+          docker-next-tag: ${{ inputs.docker-next-tag-prefix }}${{ steps.sha-short.outputs.sha_short }}
+      - name: Output
+        id: out
+        run: echo "docker-final-tag=${{ inputs.docker-next-tag-prefix }}${{ steps.sha-short.outputs.sha_short }}" >> $GITHUB_OUTPUT

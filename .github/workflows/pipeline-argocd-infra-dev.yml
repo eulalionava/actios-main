@@ -8,7 +8,7 @@ on:
         type: string
         default: "4.6"
       project-key:
-        description: "Identificado del proyecto(namespace dentro del cluster ARO)"
+        description: "Identificador del proyecto(namespace dentro del cluster ARO)"
         required: true
         type: string
       project-description:
