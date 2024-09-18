@@ -90,6 +90,10 @@ jobs:
     outputs:
       runner: ${{ steps.checkunittests.outputs.runner }}
     steps:
+    - name: Check docker-tag-prefix value
+      id: docker-tag-prefix-value
+      run: |
+        echo "inputs.docker-tag-prefix = ${{inputs.inputs.docker-tag-prefix}}"
     - name: Check unit tests
       id: checkunittests
       run: |
