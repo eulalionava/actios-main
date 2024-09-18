@@ -58,6 +58,7 @@ jobs:
       - name: Get previous tag
         uses: BUS-BackOffice/WEB_CI_CD_F2OXXO/.github/actions/composite/azure/acr@develop
         id: sha
+        continue-on-error: true
         with:
           acr-name: ${{ inputs.acr-name }}
           acr-repo-name: ${{ inputs.project-key }}
@@ -66,6 +67,14 @@ jobs:
       - name: Get SHA
         id: sha-short
         run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+      - name: Check FINALTAG and set sha_short if necessary
+        run: |
+          if [ -z "${{ env.FINALTAG }}" ]; then
+            echo "FINALTAG no existe, asignando sha_short"
+            echo "FINALTAG=${{ steps.sha-short.outputs.sha_short }}" >> $GITHUB_ENV
+          else
+            echo "FINALTAG ya existe: ${{ env.FINALTAG }}"
+          fi
       - name: Docker Push
         uses: BUS-BackOffice/WEB_CI_CD_F2OXXO/.github/actions/composite/common/docker-retag@develop
         with:
