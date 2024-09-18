@@ -21,7 +21,7 @@ on:
         description: "Name ACR"
         required: true
         type: string
-        default: ""
+        default: "arc-inventario"
     secrets:
       docker-registry:
         description: "login registry for pull/push images"
