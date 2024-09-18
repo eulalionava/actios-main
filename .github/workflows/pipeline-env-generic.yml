@@ -11,10 +11,10 @@ on:
         required: false
         type: string
     outputs:
-      current-environment: 
+      current: 
         description: "Current Environment"
         value: ${{ jobs.prepare.outputs.current }}
-      previous-environment: 
+      previous: 
         description: "Previous Environment"
         value: ${{ jobs.prepare.outputs.previous }}
       run-unit-tests:
