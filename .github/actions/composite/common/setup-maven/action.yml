@@ -33,6 +33,27 @@ runs:
         env:
           INPUT_MAVEN_VERSION: ${{ inputs.maven-version }}
         run:  echo $PWD/apache-maven-${INPUT_MAVEN_VERSION}/bin >> $GITHUB_PATH
+      
+      - shell: bash
+        run: |
+          # Crear settings.xml para configurar el mirror de Nexus
+          mkdir -p ~/.m2
+          cat <<EOF > ~/.m2/settings.xml
+          <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
+                    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                    xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.0.0 
+                    http://maven.apache.org/xsd/settings-1.0.0.xsd">
+              <mirrors>
+            		<mirror>
+            			<id>maven-default-http-blocker</id>
+            			<mirrorOf>external:dummy:*</mirrorOf>
+            			<name>Pseudo repository to mirror external repositories initially using HTTP.</name>
+            			<url>http://oxvearch01.comercio.fne:8000/nexus/content/repositories/com.femsa.oxxo.comp</url>
+            			<blocked>true</blocked>
+            		</mirror>
+            	</mirrors>
+          </settings>
+          EOF
 
       - shell: bash
         run: mvn -v
