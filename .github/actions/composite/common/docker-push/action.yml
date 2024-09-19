@@ -62,6 +62,10 @@ runs:
         with:
             name: ${{ inputs.project-key }}
             path: ${{ inputs.base-dir }}/${{ inputs.art-location }}/
+            
+      - name: Run shell command
+        run: |
+          podman pull registry.redhat.io/jboss-eap-8/eap8-openjdk17-builder-openshift-rhel8:1.0.1.GA-7
 
       - name: Build Image
         id: build-image
