@@ -64,8 +64,8 @@ runs:
             path: ${{ inputs.base-dir }}/${{ inputs.art-location }}/
             
       - name: Run shell command
-        run: |
-          podman pull registry.redhat.io/jboss-eap-8/eap8-openjdk17-builder-openshift-rhel8:1.0.1.GA-7
+        run: podman pull registry.redhat.io/jboss-eap-8/eap8-openjdk17-builder-openshift-rhel8:1.0.1.GA-7
+        shell: bash
 
       - name: Build Image
         id: build-image
