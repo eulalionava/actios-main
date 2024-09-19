@@ -51,7 +51,7 @@ runs:
   steps:
       - name: Login to Pull Registry
         run: |
-          podman login -u=${{ inputs.docker-in-username }} -p=${{ inputs.docker-in-password }} ${{ inputs.docker-in-registry}}
+          podman login -u="${{ inputs.docker-in-username }}" -p="${{ inputs.docker-in-password }}" ${{ inputs.docker-in-registry }}
         shell: bash
         
       - uses: actions/download-artifact@v4
