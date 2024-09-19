@@ -49,25 +49,16 @@ inputs:
 runs:
   using: "composite"
   steps:
-      - name: Login to Input Registry
-        # if: inputs.docker-in-login
-        uses: redhat-actions/podman-login@v1.7
-        with:
-          registry: registry.redhat.io
-          username: 18181889|oxxocicd
-          password: eyJhbGciOiJSUzUxMiJ9.eyJzdWIiOiI2YjUwZTFkY2YyZTE0ZmI1OGFlODYzODYzZmZmY2JkNSJ9.BgIHBvZCs_BILUTIKUDJKo4IBA-ob5adspJUl1-xomMXHW1IYhGMyzZ4WTlcIJCb-s9Ny2e-lCNfQxRnLn9u7Kr-O9QY7Clv5h9nWiH-Rf06aQEqRj3aiBvva3uq-1AzHG3pPq3k7IL_gI0jov2iQ-tHBPsZWq7ekkjoQYZzdU9nW6tZXcKUmWw6qNpanCW-5gjCrgW4RdAcQYaaPrAD7eEW7rUsdLh1S7NKMDTn06RLDgcaMC26991nN1XOCTSUEYf4XW66wLZi8kqR8NaLQf-e9EvAp4S5werZgcPRudbHwW1sBFyTbT9Zp75_hkLLia80nHgyk6Ye4dwg8nrgKw9jFlBirLx1ZggnOK2Mg1Rd5fLLsNG6If4tOYp0mUAL1ZxrqckLdfqD2XpRY4joHvG5UoN8P7zckmSKb2C6kD3hb1OoAgTNXG3AHTtSLtdH8nG7cu7y43x-_gnoa3Ev25JrY8doVSR2co-EEh84VOCrxWo9ht78XniC1fI5TeW7_4gnJawJXpilFdjgneU8lRcutVtbhdYg6r9bCCBQmm8k6oYA6o2vwZU4F_F4EBw-Iun1fFmY9s3ReQsfw_TK6XIM24YEuuH8K3B9E5zMJ1VvrkQblTvwIXcS7uxE_eWvPQYRi2sOwmMTWg2uZFNKyET-x3aF_usmb0dtCAO2Gek
-          logout: false
-
+      - name: Login to Pull Registry
+        run: |
+          podman login -u=${{ inputs.docker-in-username }} -p=${{ inputs.docker-in-password }} ${{ inputs.docker-in-registry}}
+        shell: bash
+        
       - uses: actions/download-artifact@v4
         with:
             name: ${{ inputs.project-key }}
             path: ${{ inputs.base-dir }}/${{ inputs.art-location }}/
             
-      - name: Run shell command
-        run: |
-          podman login -u='18181889|oxxocicd' -p=eyJhbGciOiJSUzUxMiJ9.eyJzdWIiOiI2YjUwZTFkY2YyZTE0ZmI1OGFlODYzODYzZmZmY2JkNSJ9.BgIHBvZCs_BILUTIKUDJKo4IBA-ob5adspJUl1-xomMXHW1IYhGMyzZ4WTlcIJCb-s9Ny2e-lCNfQxRnLn9u7Kr-O9QY7Clv5h9nWiH-Rf06aQEqRj3aiBvva3uq-1AzHG3pPq3k7IL_gI0jov2iQ-tHBPsZWq7ekkjoQYZzdU9nW6tZXcKUmWw6qNpanCW-5gjCrgW4RdAcQYaaPrAD7eEW7rUsdLh1S7NKMDTn06RLDgcaMC26991nN1XOCTSUEYf4XW66wLZi8kqR8NaLQf-e9EvAp4S5werZgcPRudbHwW1sBFyTbT9Zp75_hkLLia80nHgyk6Ye4dwg8nrgKw9jFlBirLx1ZggnOK2Mg1Rd5fLLsNG6If4tOYp0mUAL1ZxrqckLdfqD2XpRY4joHvG5UoN8P7zckmSKb2C6kD3hb1OoAgTNXG3AHTtSLtdH8nG7cu7y43x-_gnoa3Ev25JrY8doVSR2co-EEh84VOCrxWo9ht78XniC1fI5TeW7_4gnJawJXpilFdjgneU8lRcutVtbhdYg6r9bCCBQmm8k6oYA6o2vwZU4F_F4EBw-Iun1fFmY9s3ReQsfw_TK6XIM24YEuuH8K3B9E5zMJ1VvrkQblTvwIXcS7uxE_eWvPQYRi2sOwmMTWg2uZFNKyET-x3aF_usmb0dtCAO2Gek registry.redhat.io
-          podman pull registry.redhat.io/jboss-eap-8/eap8-openjdk17-builder-openshift-rhel8:1.0.1.GA-7
-        shell: bash
 
       - name: Build Image
         id: build-image
