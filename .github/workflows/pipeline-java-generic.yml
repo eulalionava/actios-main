@@ -37,7 +37,7 @@ on:
         required: false
         type: string
         default: "OXZKVMDPD01"
-      keyvault-secret-prefix:
+      keyvault-secret-prefix-list:
         description: "Prefix to remove on each secret"
         required: false
         type: string
@@ -123,7 +123,7 @@ jobs:
         with:
           keyvault-name: ${{ inputs.keyvault-name }}
           keyvault-secret-list: ${{ inputs.keyvault-secret-list }}
-          keyvault-prefix: ${{ inputs.keyvault-secret-prefix }}
+          keyvault-prefix-list: ${{ inputs.keyvault-secret-prefix-list }}
           azure-creds: ${{ secrets.azure-creds }}
       - name: Build
         uses: BUS-BackOffice/WEB_CI_CD_F2OXXO/.github/actions/composite/springboot/build@develop

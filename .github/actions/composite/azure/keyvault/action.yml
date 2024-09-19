@@ -8,7 +8,7 @@ inputs:
   keyvault-secret-list:
     description: "Space separated key names"
     required: true
-  keyvault-prefix:
+  keyvault-prefix-list:
     description: "Prefix name for variables"
     required: false
   azure-creds:
@@ -50,5 +50,7 @@ runs:
         az login --service-principal -u $AZURECLIENTID -p $AZURECLIENTSECRET --tenant $AZURETENANTID
         for KEY in $(echo "${{ inputs.keyvault-secret-list }}"); do
           az keyvault secret show --vault-name ${{ inputs.keyvault-name }} -n $KEY
-          echo "$(echo $KEY | sed 's/${{ inputs.keyvault-prefix }}//g' | sed 's/-/_/g')=$(az keyvault secret show --vault-name ${{ inputs.keyvault-name }} -n $KEY --query 'value' | tr -d '"')" >> $GITHUB_ENV
+          for KEY_PREFIX in $(echo "${{ inputs.keyvault-prefix-list }}"); do
+            echo "$(echo $KEY | sed "s/$KEY_PREFIX//g" | sed 's/-/_/g')=$(az keyvault secret show --vault-name ${{ inputs.keyvault-name }} -n $KEY --query 'value' | tr -d '"')" >> $GITHUB_ENV
+          done
         done
