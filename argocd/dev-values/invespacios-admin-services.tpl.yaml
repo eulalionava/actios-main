@@ -6,16 +6,14 @@ app:
       - name: configmaps.create
         value: "true"
       - name: configmaps.list[0].name
-        value: mdm-configmap
+        value: invespacios-admin-services-configmap
       - name: configmaps.list[0].data.PORTAL_VERSION
         value: %FINAL_TAG%
 
       - name: secrets.list[0].name
-        value: mdm-secrets-store-creds
+        value: invespacios-admin-services-secrets-store-creds
       - name: secrets.list[0].type
         value: Opaque
-      # - name: 'secrets.list[0].extraLabels.secrets-store.csi.k8s.io/used'
-      #   value: "true"
       - name: secrets.list[0].stringData.clientid
         value: %JAR_AZURE_KEYVAULT_CLIENTID_DEV%
       - name: secrets.list[0].stringData.clientsecret
