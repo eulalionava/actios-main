@@ -37,42 +37,9 @@ app:
         #   periodSeconds: 30
         #   successThreshold: 1
         #   failureThreshold: 3
-        env:
-        - name: PORTAL_VERSION
-          valueFrom:
-            configMapKeyRef:
-              name: invespacios-admin-services-configmap
-              key: PORTAL_VERSION
-        - name: FCWSE_JDBC
-          valueFrom:
-            secretKeyRef:
-              name: invespacios-admin-services-secrets-store-creds
-              key: FCWSE_JDBC
-        - name: FCWSE_PB_PASS
-          valueFrom:
-            secretKeyRef:
-              name: invespacios-admin-services-secrets-store-creds
-              key: FCWSE_PB_PASS
-        - name: FCWSE_PB_USER
-          valueFrom:
-            secretKeyRef:
-              name: invespacios-admin-services-secrets-store-creds
-              key: FCWSE_PB_USER
-        - name: AC_URL_BACK
-          valueFrom:
-            secretKeyRef:
-              name: invespacios-admin-services-secrets-store-creds
-              key: AC_URL_BACK
-        - name: PB_APPID
-          valueFrom:
-            secretKeyRef:
-              name: invespacios-admin-services-secrets-store-creds
-              key: PB_APPID
-        - name: PB_URL_FRONT
-          valueFrom:
-            secretKeyRef:
-              name: invespacios-admin-services-secrets-store-creds
-              key: PB_URL_FRONT
+        envFrom:
+        - secretRef:
+            name: test-secret
         image:
           repository: oxzacrmdps01.azurecr.io/oxzacrmdps01/invespacios-admin-services
         replicaCount: 1
@@ -103,7 +70,7 @@ app:
           providerRefs:
           - objName: OXZKVSD-IE-SERVICE-IMAGE-URL
             key: SERVICE_IMAGE_URL
-          - objName: OXZKVSD-IE-SERVICE-SECURITY-URL
+          - objName: OXZKVSD-IE-SERVICE-SECURIT-URL
             key: SERVICE_SECURITY_URL
           - objName: OXZKVSD-IE-SERVICE-USER-DEFAULT
             key: SERVICE_USER_DEFAULT
