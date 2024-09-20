@@ -1,0 +1,101 @@
+name: Workflow Environment Frontend
+on:
+  workflow_call:
+    inputs:
+      ref_name:
+        description: "Git Branch"
+        required: true
+        type: string
+      portal_id:
+        description: "2,3 Letter Portal ID"
+        required: true
+        type: string
+      run_unit_tests:
+        description: "Run unit tests"
+        required: false
+        type: string
+    outputs:
+      current-environment: 
+        description: "Current Environment"
+        value: ${{ jobs.prepare.outputs.current }}
+      previous-environment: 
+        description: "Previous Environment"
+        value: ${{ jobs.prepare.outputs.previous }}
+      keyvault-secret-list: 
+        description: "Keyvault Secret list"
+        value: ${{ jobs.prepare.outputs.keyvault-secret-list }}
+      keyvault-secret-prefix: 
+        description: "Keyvault Secret prefix"
+        value: ${{ jobs.prepare.outputs.keyvault-secret-prefix }}
+      keyvault-name: 
+        description: "Keyvault Name"
+        value: ${{ jobs.prepare.outputs.keyvault-name }}
+      run-unit-tests:
+        description: "Run unit tests"
+        value: ${{ jobs.prepare.outputs.runtests }}
+      dir:
+        description: "Directory"
+        value: ${{ jobs.prepare.outputs.dir }}
+permissions: write-all
+jobs:
+  prepare:
+    outputs:
+      current: ${{ steps.prepare.outputs.current }}
+      previous: ${{ steps.prepare.outputs.previous }}
+      keyvault-secret-list: ${{ steps.prepare.outputs.keyvault-secret-list }}
+      keyvault-secret-prefix: ${{ steps.prepare.outputs.keyvault-secret-prefix }}
+      keyvault-name: ${{ steps.prepare.outputs.keyvault-name }}
+      backend-endpoint: ${{ steps.prepare.outputs.backend-endpoint }}
+      runtests: ${{ steps.prepare.outputs.runtests }}
+      dir: ${{ steps.prepare.outputs.dir }}
+    runs-on: ubuntu-latest
+    steps:
+    - id: prepare
+      run: |
+        
+        # unittestss
+        if [ -z "${{ inputs.run_unit_tests }}" ]; then
+          echo "runtests=false" >> $GITHUB_OUTPUT;
+        else
+          echo "runtests=${{ inputs.run_unit_tests }}" >> $GITHUB_OUTPUT;
+        fi
+        
+        echo "${{ inputs.ref_name }}"
+        if [ "${{ inputs.ref_name }}" = "main" ]; then
+          # PROD
+          echo "current=prod" >> $GITHUB_OUTPUT;
+          echo "dir=prod" >> $GITHUB_OUTPUT;
+          echo "previous=qa" >> $GITHUB_OUTPUT;
+
+          echo "keyvault-secret-list=OXZKVSP-AC-URL-BACK OXZKVSP-AC-URL-START OXZKVSP-${{ inputs.portal_id }}-URL-BACK" >> $GITHUB_OUTPUT;
+          echo "keyvault-secret-prefix=OXZKVSP-" >> $GITHUB_OUTPUT;
+          echo "keyvault-name=OXZKVMDPP01" >> $GITHUB_OUTPUT;
+
+        elif [ "${{ inputs.ref_name }}" = "staging" ]; then
+          # QA
+          echo "current=qa" >> $GITHUB_OUTPUT;
+          echo "dir=qa" >> $GITHUB_OUTPUT;
+          echo "previous=dev" >> $GITHUB_OUTPUT;
+
+          echo "keyvault-secret-list=OXZKVSQ-AC-URL-BACK OXZKVSQ-AC-URL-START OXZKVSQ-${{ inputs.portal_id }}-URL-BACK" >> $GITHUB_OUTPUT;
+          echo "keyvault-secret-prefix=OXZKVSQ-" >> $GITHUB_OUTPUT;
+          echo "keyvault-name=OXZKVMDPD01" >> $GITHUB_OUTPUT;
+        elif [ "${{ inputs.ref_name }}" = "develop" ]; then
+          # DEV
+          echo "current=dev" >> $GITHUB_OUTPUT;
+          echo "dir=dev" >> $GITHUB_OUTPUT;
+          echo "previous='feat'" >> $GITHUB_OUTPUT;
+
+          echo "keyvault-secret-list=OXZKVSD-AC-URL-BACK OXZKVSD-AC-URL-START OXZKVSD-${{ inputs.portal_id }}-URL-BACK" >> $GITHUB_OUTPUT;
+          echo "keyvault-secret-prefix=OXZKVSD-" >> $GITHUB_OUTPUT;
+          echo "keyvault-name=OXZKVMDPD01" >> $GITHUB_OUTPUT;
+        else
+          # FEAT
+          echo "current=feat" >> $GITHUB_OUTPUT;
+          echo "dir=dev" >> $GITHUB_OUTPUT;
+          echo "previous=''" >> $GITHUB_OUTPUT;
+
+          echo "keyvault-secret-list=OXZKVSD-AC-URL-BACK OXZKVSD-AC-URL-START OXZKVSD-${{ inputs.portal_id }}-URL-BACK" >> $GITHUB_OUTPUT;
+          echo "keyvault-secret-prefix=OXZKVSD-" >> $GITHUB_OUTPUT;
+          echo "keyvault-name=OXZKVMDPD01" >> $GITHUB_OUTPUT;
+        fi
