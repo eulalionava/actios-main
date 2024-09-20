@@ -7,7 +7,7 @@ extraLabels:
 crnamespace: openshift-gitops
 app:
   destination:
-    namespace: openshift-gitops
+    namespace: inventario-espacios
     server: 'https://kubernetes.default.svc'
   project: default
   type: helm
@@ -18,7 +18,7 @@ app:
     revision: 0.1.9
     values:
         nameOverride: "inv-espacios-admin-services-dev"
-        routeHostOverride: inv-espacios-admin-services-dev-openshift-gitops.apps.oxzaromdp01.southcentralus.aroapp.io
+        routeHostOverride: inv-espacios-admin-services-dev-inventario-espacios.apps.oxzaromdp01.southcentralus.aroapp.io
         # livenessProbe: 
         #     tcpSocket:
         #       port: 8080
