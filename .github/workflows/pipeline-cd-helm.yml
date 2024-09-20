@@ -62,6 +62,10 @@ on:
         description: ""
         required: false
         type: string
+      project-key:
+        description: "Identificador del proyecto(namespace dentro del cluster ARO)"
+        required: true
+        type: string
       
 permissions: write-all
 jobs:
@@ -99,3 +103,5 @@ jobs:
           helm-pass: ${{ secrets.helm-pass }}
           openshift-server: ${{ secrets.openshift-server }}
           openshift-token: ${{ secrets.openshift-token }}
+
+          project-key: ${{ inputs.project-key }}
