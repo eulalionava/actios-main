@@ -58,6 +58,8 @@ jobs:
             fi
             REPLACENAME="%$SECRETNAME%"
 
+            echo "remplazando $REPLACENAME por $SECRETCONTENT en archivo $FILE"
+
             if [ -z "${SECRETCONTENT}" ]; then exit 1; fi
             sed -i $FILE -e "s/$REPLACENAME/$SECRETCONTENT/g"
           done
