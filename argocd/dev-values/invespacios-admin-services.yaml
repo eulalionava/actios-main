@@ -9,7 +9,7 @@ app:
   destination:
     namespace: openshift-gitops
     server: 'https://kubernetes.default.svc'
-  project: inventario-espacios
+  project: default
   type: helm
   autosync: true
   helm:
