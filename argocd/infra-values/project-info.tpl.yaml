@@ -6,7 +6,7 @@ app:
       - name: secrets.list[0].name
         value: azure-cr
       - name: secrets.list[0].namespace
-        value: rec-hum
+        value: inventario-espacios
       - name: secrets.list[0].assignSecret
         value: "false"
       - name: secrets.list[0].assignPull
