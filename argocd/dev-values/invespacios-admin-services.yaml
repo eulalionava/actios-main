@@ -60,7 +60,7 @@ app:
             readOnly: true
             path: /mnt/secrets-store
             secretProviderClass: pb-azure-kv
-            secretProviderCreds: pb-secrets-store-creds
+            secretProviderCreds: invespacios-admin-services-secrets-store-creds
         configmaps:
           list: []
         secrets:
