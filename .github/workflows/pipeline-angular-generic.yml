@@ -123,11 +123,11 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
       - name: Setup npm and node
-        uses: BUS-BackOffice/WEB_CI_CD_F2OXXO/.github/actions/composite/common/setup-node@main
+        uses: BUS-BackOffice/WEB_CI_CD_F2OXXO/.github/actions/composite/common/setup-node@develop
         with:
           node-version: ${{ inputs.node-version }}
       - name: Secrets
-        uses: BUS-BackOffice/WEB_CI_CD_F2OXXO/.github/actions/composite/azure/keyvault@main
+        uses: BUS-BackOffice/WEB_CI_CD_F2OXXO/.github/actions/composite/azure/keyvault@develop
         if: inputs.run-replace
         with:
           keyvault-name: ${{ inputs.keyvault-name }}
@@ -144,7 +144,7 @@ jobs:
         id: sha
         run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
       - name: Build
-        uses: BUS-BackOffice/WEB_CI_CD_F2OXXO/.github/actions/composite/node/build@main
+        uses: BUS-BackOffice/WEB_CI_CD_F2OXXO/.github/actions/composite/node/build@develop
         with:
           project-key: ${{ inputs.project-key }}
           base-dir: ${{ inputs.base-dir }}
@@ -155,7 +155,7 @@ jobs:
           ac-start-endpoint: ${{ env.AC_URL_START }}
           git-sha: ${{ steps.sha.outputs.sha_short }}
       - name: Docker Push
-        uses: BUS-BackOffice/WEB_CI_CD_F2OXXO/.github/actions/composite/common/docker-push@main
+        uses: BUS-BackOffice/WEB_CI_CD_F2OXXO/.github/actions/composite/common/docker-push@develop
         with:
           project-key: ${{ inputs.project-key }}
           docker-in-login: ${{ inputs.docker-in-login }}
