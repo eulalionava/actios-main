@@ -11,7 +11,7 @@ app:
         value: %FINAL_TAG%
 
       - name: secrets.list[0].name
-        value: invespacios-admin-services-secrets-store-creds
+        value: invespacios-secrets-store-creds
       - name: secrets.list[0].type
         value: Opaque
       - name: secrets.list[0].stringData.clientid
