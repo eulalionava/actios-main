@@ -101,4 +101,5 @@ app:
           providerClassName: pb-azure-kv
         imagePullSecrets:
           create: true
-          list: [azure-cr]
+          list: 
+          - name: azure-cr
