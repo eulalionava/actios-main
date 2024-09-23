@@ -39,7 +39,7 @@ app:
         #   failureThreshold: 3
         envFrom:
         - secretRef:
-            name: test-secret
+            name: invespacios-admin-services-secrets
         image:
           repository: oxzacrmdps01.azurecr.io/oxzacrmdps01/invespacios-admin-services
         replicaCount: 1
@@ -60,7 +60,7 @@ app:
             readOnly: true
             path: /mnt/secrets-store
             secretProviderClass: pb-azure-kv
-            secretProviderCreds: invespacios-admin-services-secrets-store-creds
+            secretProviderCreds: invespacios-secrets-store-creds
         configmaps:
           list: []
         secrets:
@@ -96,6 +96,9 @@ app:
             key: HIKARI_DRIVER
           - objName: OXZKVSD-IE-SWAGGER-ENABLED
             key: SWAGGER_ENABLED
-          providerSecretName: invespacios-admin-services-secrets-store-creds
+          providerSecretName: invespacios-admin-services-secrets
           providerKeyvaultName: OXZKVMDPD01
           providerClassName: pb-azure-kv
+        imagePullSecrets:
+          create: true
+          list: [azure-cr]
