@@ -152,7 +152,7 @@ jobs:
           replace-envs: ${{ inputs.run-replace }}
           backend-pedidos-endpoint: https://inventario-espacios-dev.apps.oxzaromdp01.southcentralus.aroapp.io/inventarioespaciosv3pedidosapi/
           backend-admin-endpoint: https://inventario-espacios-dev.apps.oxzaromdp01.southcentralus.aroapp.io/inventarioespaciosv3adminapi/
-          auth-endpoint: https://oxzasetpdev02.azurewebsites.net/AuthFemcoProxBack
+          auth-endpoint: https://oxzasetpdev05.azurewebsites.net/AuthFemcoProxBack
           ac-start-endpoint: https://fcportaldes.femcom.net:8443/AuthFemcoProx
           git-sha: ${{ steps.sha.outputs.sha_short }}
       - name: Docker Push
