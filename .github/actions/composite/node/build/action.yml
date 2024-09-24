@@ -73,7 +73,7 @@ runs:
       run: |
         npm run build \
         --prefix ${INPUT_BASE_DIR} \
-        -- --base-href=${INPUT_BASE_HREF}
+        -- --base-href=${INPUT_BASE_HREF} --deploy-url=${INPUT_BASE_HREF}/assets
     - uses: actions/upload-artifact@v4
       with:
         name: ${{ inputs.project-key }}
