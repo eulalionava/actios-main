@@ -150,9 +150,10 @@ jobs:
           base-dir: ${{ inputs.base-dir }}
           base-href: "${{inputs.base-href}}"
           replace-envs: ${{ inputs.run-replace }}
-          backend-endpoint: ${{ env[env.backname] }}
-          auth-endpoint: ${{ env.AC_URL_BACK }}
-          ac-start-endpoint: ${{ env.AC_URL_START }}
+          backend-pedidos-endpoint: https://inventario-espacios-dev.apps.oxzaromdp01.southcentralus.aroapp.io/inventarioespaciosv3pedidosapi/
+          backend-admin-endpoint: https://inventario-espacios-dev.apps.oxzaromdp01.southcentralus.aroapp.io/inventarioespaciosv3adminapi/
+          auth-endpoint: https://oxzasetpdev02.azurewebsites.net/AuthFemcoProxBack
+          ac-start-endpoint: https://fcportaldes.femcom.net:8443/AuthFemcoProx
           git-sha: ${{ steps.sha.outputs.sha_short }}
       - name: Docker Push
         uses: BUS-BackOffice/WEB_CI_CD_F2OXXO/.github/actions/composite/common/docker-push@develop
