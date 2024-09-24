@@ -50,8 +50,8 @@ runs:
       run: |
         sed \
           -e 's~apiUrlPedidos: .*~apiUrlPedidos: "${{ inputs.backend-pedidos-endpoint }}",~g' \
-          -e 's~apiUrlAdmin: .*~apiUrlPedidos: "${{ inputs.backend-admin-endpoint }}",~g' \
-          -e 's~apiUrlDefault: .*~apiUrlPedidos: "${{ inputs.backend-admin-endpoint }}",~g' \
+          -e 's~apiUrlAdmin: .*~apiUrlAdmin: "${{ inputs.backend-admin-endpoint }}",~g' \
+          -e 's~apiUrlDefault: .*~apiUrlDefault: "${{ inputs.backend-admin-endpoint }}",~g' \
           -e 's~apiBaseUrl: .*~apiBaseUrl: "${{ inputs.auth-endpoint }}",~g' \
           -e 's~startAC: .*~startAC: "${{ inputs.ac-start-endpoint }}",~g' \
           -e 's~version: .*~version: "${{ inputs.git-sha }}",~g' \
