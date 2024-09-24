@@ -1,0 +1,105 @@
+nameOverride: ""
+fullnameOverride: ""
+extraLabels:
+  - app: porta-inventario-espacios
+  - env: dev
+  - component: backend
+crnamespace: openshift-gitops
+app:
+  destination:
+    namespace: inventario-espacios
+    server: 'https://kubernetes.default.svc'
+  project: default
+  type: helm
+  autosync: true
+  helm:
+    chart: portales
+    url: http://20.118.83.132:8081/repository/helm/
+    revision: 0.1.10
+    values:
+        nameOverride: "portal-inventario-espacios-dev"
+        routeHostOverride: portal-inventario-espacios-dev-inventario-espacios.apps.oxzaromdp01.southcentralus.aroapp.io
+        # livenessProbe: 
+        #     tcpSocket:
+        #       port: 8080
+        #     initialDelaySeconds: 10
+        #     timeoutSeconds: 1
+        #     periodSeconds: 10
+        #     successThreshold: 1
+        #     failureThreshold: 3
+        # readinessProbe:
+        #   httpGet:
+        #     path: /v3/api-docs
+        #     port: 8080
+        #     scheme: HTTP
+        #   initialDelaySeconds: 20
+        #   timeoutSeconds: 3
+        #   periodSeconds: 30
+        #   successThreshold: 1
+        #   failureThreshold: 3
+        envFrom:
+        - secretRef:
+            name: portal-inventario-espacios-secrets
+        image:
+          repository: oxzacrmdps01.azurecr.io/oxzacrmdps01/portal-inventarios-espacios
+        replicaCount: 1
+        serviceAccount:
+          name: "default"
+        extraLabels:
+          - app.openshift.io/runtime: nodejs
+          - app.kubernetes.io/part-of: porta-inventario-espacios
+          - app.openshift.io/part-off: porta-inventario-espacios
+          - portal: porta-inventario-espacios
+          - env: dev
+          - component: backend
+        containerVolumes:
+          create: true
+          list:
+          - type: inline-secret-store
+            name: secrets-store-inline
+            readOnly: true
+            path: /mnt/secrets-store
+            secretProviderClass: pb-azure-kv
+            secretProviderCreds: portal-inventarios-espacios-secrets-store-creds
+        configmaps:
+          list: []
+        secrets:
+          create: true
+          createProvider: true
+          list: []
+          providerRefs:
+          - objName: OXZKVSD-IE-SERVICE-IMAGE-URL
+            key: SERVICE_IMAGE_URL
+          - objName: OXZKVSD-IE-SERVICE-SECURIT-URL
+            key: SERVICE_SECURITY_URL
+          - objName: OXZKVSD-IE-SERVICE-USER-DEFAULT
+            key: SERVICE_USER_DEFAULT
+          - objName: OXZKVSD-FCIAS-JDBC
+            key: FCIAS_JDBC
+          - objName: OXZKVSD-FCIAS-IE-XXINE-USR
+            key: FCIAS_IE_XXINE_USR
+          - objName: OXZKVSD-FCIAS-IE-XXINE-PASS
+            key: FCIAS_IE_XXINE_PASS
+          - objName: OXZKVSD-IE-PS-POOL-SIZE-MAX
+            key: POOL_SIZE_MAX
+          - objName: OXZKVSD-IE-PS-IDLE-MIN
+            key: IDLE_MIN
+          - objName: OXZKVSD-IE-PS-IDLE-TIMEOUT
+            key: IDLE_TIMEOUT
+          - objName: OXZKVSD-IE-PS-CONNECTION-TIMEOUT
+            key: CONNECTION_TIMEOUT
+          - objName: OXZKVSD-IE-PS-LIFETIME-MAX
+            key: LIFETIME_MAX
+          - objName: OXZKVSD-IE-SERVER-SMTP
+            key: SERVER_SMTP
+          - objName: OXZKVSD-IE-HIKARI-DRIVER
+            key: HIKARI_DRIVER
+          - objName: OXZKVSD-IE-SWAGGER-ENABLED
+            key: SWAGGER_ENABLED
+          providerSecretName: portal-inventario-espacios-secrets
+          providerKeyvaultName: OXZKVMDPD01
+          providerClassName: pb-azure-kv
+        imagePullSecrets:
+          create: true
+          list: 
+          - name: azure-cr
