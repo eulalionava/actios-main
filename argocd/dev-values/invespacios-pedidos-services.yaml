@@ -18,7 +18,8 @@ app:
     revision: 0.1.10
     values:
         nameOverride: "inv-espacios-pedidos-services-dev"
-        routeHostOverride: inv-espacios-pedidos-services-dev-inventario-espacios.apps.oxzaromdp01.southcentralus.aroapp.io
+        routeHostOverride: inventario-espacios-dev.apps.oxzaromdp01.southcentralus.aroapp.io
+        routePathPrefix: /inventarioespaciosv2pedidosapi
         # livenessProbe: 
         #     tcpSocket:
         #       port: 8080
