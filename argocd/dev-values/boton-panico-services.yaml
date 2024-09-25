@@ -19,7 +19,7 @@ app:
     values:
         nameOverride: "boton-panico-services-dev"
         routeHostOverride: inventario-espacios-dev.apps.oxzaromdp01.southcentralus.aroapp.io
-        routePathPrefix: /botonpanicoservices
+        routePathPrefix: /botonservices
         # livenessProbe: 
         #     tcpSocket:
         #       port: 8080
