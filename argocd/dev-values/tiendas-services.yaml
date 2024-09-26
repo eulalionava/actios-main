@@ -1,0 +1,94 @@
+nameOverride: ""
+fullnameOverride: ""
+extraLabels:
+  - app: tiendas-services
+  - env: dev
+  - component: backend
+crnamespace: openshift-gitops
+app:
+  destination:
+    namespace: boton-panico
+    server: 'https://kubernetes.default.svc'
+  project: default
+  type: helm
+  autosync: true
+  helm:
+    chart: portales
+    url: http://20.118.83.132:8081/repository/helm/
+    revision: 0.1.11
+    values:
+        nameOverride: "tiendas-services-dev"
+        routeHostOverride: boton-panico-dev.apps.oxzaromdp01.southcentralus.aroapp.io
+        routePathPrefix: /tiendas-services
+        # livenessProbe: 
+        #     tcpSocket:
+        #       port: 8080
+        #     initialDelaySeconds: 10
+        #     timeoutSeconds: 1
+        #     periodSeconds: 10
+        #     successThreshold: 1
+        #     failureThreshold: 3
+        # readinessProbe:
+        #   httpGet:
+        #     path: /v3/api-docs
+        #     port: 8080
+        #     scheme: HTTP
+        #   initialDelaySeconds: 20
+        #   timeoutSeconds: 3
+        #   periodSeconds: 30
+        #   successThreshold: 1
+        #   failureThreshold: 3
+        envFrom:
+        - secretRef:
+            name: tiendas-services-secrets
+        image:
+          repository: oxzacrmdps01.azurecr.io/oxzacrmdps01/tiendas-services
+        replicaCount: 1
+        serviceAccount:
+          name: "default"
+        extraLabels:
+          - app.openshift.io/runtime: spring-boot
+          - app.kubernetes.io/part-of: tiendas-services
+          - app.openshift.io/part-off: tiendas-services
+          - portal: tiendas-services
+          - env: dev
+          - component: backend
+        containerVolumes:
+          create: true
+          list:
+          - type: inline-secret-store
+            name: secrets-store-inline
+            readOnly: true
+            path: /mnt/secrets-store
+            secretProviderClass: pb-azure-kv
+            secretProviderCreds: tiendas-services-store-creds
+        configmaps:
+          list: []
+        secrets:
+          create: true
+          createProvider: true
+          list: []
+          providerRefs:
+          - objName: OXZKVSD-FCIAS-JDBC
+            key: FCIAS_JDBC
+          - objName: OXZKVSD-FCIAS-TIENDASVIEW-USR
+            key: FCIAS_TIENDASVIEW_USR
+          - objName: OXZKVSD-FCIAS-TIENDASVIEW-PASS
+            key: FCIAS_TIENDASVIEW_PASS
+          - objName: OXZKVSD-TS-HIKARI-DRIVER
+            key: HIKARI_DRIVER
+          - objName: OXZKVSD-TS-SWAGGER-ENABLED
+            key: SWAGGER_ENABLED
+          - objName: OXZKVSD-TS-POOL-SIZE-MAX
+            key: POOL_SIZE_MAX
+          - objName: OXZKVSD-TS-IDLE-MIN
+            key: IDLE_MIN
+          - objName: OXZKVSD-BP-SECURITY-URL
+            key: SECURITY_URL
+          providerSecretName: tiendas-services-secrets
+          providerKeyvaultName: OXZKVMDPD01
+          providerClassName: pb-azure-kv
+        imagePullSecrets:
+          create: true
+          list: 
+          - name: azure-cr
