@@ -11,7 +11,7 @@ app:
         value: %FINAL_TAG%
 
       - name: secrets.list[0].name
-        value: config-services-store-creds
+        value: tpe-config-services-store-creds
       - name: secrets.list[0].type
         value: Opaque
       - name: secrets.list[0].stringData.clientid
