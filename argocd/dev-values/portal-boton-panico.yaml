@@ -18,7 +18,7 @@ app:
     revision: 0.1.11
     values:
         nameOverride: "portal-inventario-espacios-dev"
-        routeHostOverride: inventario-espacios-dev.apps.oxzaromdp01.southcentralus.aroapp.io
+        routeHostOverride: boton-panico-dev.apps.oxzaromdp01.southcentralus.aroapp.io
         routePathPrefix: /PortalBotonPanicoV2
         # livenessProbe: 
         #     tcpSocket:
