@@ -17,7 +17,7 @@ app:
     url: http://20.118.83.132:8081/repository/helm/
     revision: 0.1.11
     values:
-        nameOverride: "config-services-dev"
+        nameOverride: ""
         routeHostOverride: boton-panico-dev.apps.oxzaromdp01.southcentralus.aroapp.io
         routePathPrefix: /tpe-config-services
         # livenessProbe: 
@@ -48,9 +48,9 @@ app:
           name: "default"
         extraLabels:
           - app.openshift.io/runtime: spring-boot
-          - app.kubernetes.io/part-of: config-services
-          - app.openshift.io/part-off: config-services
-          - portal: config-services
+          - app.kubernetes.io/part-of: tpe-config-services
+          - app.openshift.io/part-off: tpe-config-services
+          - portal: boton-panico
           - env: dev
           - component: backend
         containerVolumes:
