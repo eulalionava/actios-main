@@ -19,7 +19,7 @@ app:
     values:
         nameOverride: "config-services-dev"
         routeHostOverride: boton-panico-dev.apps.oxzaromdp01.southcentralus.aroapp.io
-        routePathPrefix: /config-services
+        routePathPrefix: /tpe-config-services
         # livenessProbe: 
         #     tcpSocket:
         #       port: 8080
