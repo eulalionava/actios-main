@@ -1,7 +1,7 @@
 nameOverride: ""
 fullnameOverride: ""
 extraLabels:
-  - app: portal-boton-panico
+  - app: tpe-config-services
   - env: dev
   - component: backend
 crnamespace: openshift-gitops
@@ -17,9 +17,9 @@ app:
     url: http://20.118.83.132:8081/repository/helm/
     revision: 0.1.11
     values:
-        nameOverride: "portal-boton-panico-dev"
+        nameOverride: "config-services-dev"
         routeHostOverride: boton-panico-dev.apps.oxzaromdp01.southcentralus.aroapp.io
-        routePathPrefix: /PortalBotonPanicoV2
+        routePathPrefix: /tpe-config-services
         # livenessProbe: 
         #     tcpSocket:
         #       port: 8080
@@ -40,17 +40,17 @@ app:
         #   failureThreshold: 3
         envFrom:
         - secretRef:
-            name: portal-boton-panico-secrets
+            name: tpe-config-services-secrets
         image:
-          repository: oxzacrmdps01.azurecr.io/oxzacrmdps01/portal-boton-panico
+          repository: oxzacrmdps01.azurecr.io/oxzacrmdps01/tiendas-services
         replicaCount: 1
         serviceAccount:
           name: "default"
         extraLabels:
-          - app.openshift.io/runtime: nodejs
-          - app.kubernetes.io/part-of: portal-boton-panico
-          - app.openshift.io/part-off: portal-boton-panico
-          - portal: portal-boton-panico
+          - app.openshift.io/runtime: spring-boot
+          - app.kubernetes.io/part-of: config-services
+          - app.openshift.io/part-off: config-services
+          - portal: config-services
           - env: dev
           - component: backend
         containerVolumes:
@@ -61,7 +61,7 @@ app:
             readOnly: true
             path: /mnt/secrets-store
             secretProviderClass: pb-azure-kv
-            secretProviderCreds: portal-boton-panico-secrets-store-creds
+            secretProviderCreds: tiendas-services-store-creds
         configmaps:
           list: []
         secrets:
@@ -69,35 +69,21 @@ app:
           createProvider: true
           list: []
           providerRefs:
-          - objName: OXZKVSD-IE-SERVICE-IMAGE-URL
-            key: SERVICE_IMAGE_URL
-          - objName: OXZKVSD-IE-SERVICE-SECURIT-URL
-            key: SERVICE_SECURITY_URL
-          - objName: OXZKVSD-IE-SERVICE-USER-DEFAULT
-            key: SERVICE_USER_DEFAULT
-          - objName: OXZKVSD-FCIAS-JDBC
-            key: FCIAS_JDBC
-          - objName: OXZKVSD-FCIAS-IE-XXINE-USR
-            key: FCIAS_IE_XXINE_USR
-          - objName: OXZKVSD-FCIAS-IE-XXINE-PASS
-            key: FCIAS_IE_XXINE_PASS
-          - objName: OXZKVSD-IE-PS-POOL-SIZE-MAX
-            key: POOL_SIZE_MAX
-          - objName: OXZKVSD-IE-PS-IDLE-MIN
-            key: IDLE_MIN
-          - objName: OXZKVSD-IE-PS-IDLE-TIMEOUT
-            key: IDLE_TIMEOUT
-          - objName: OXZKVSD-IE-PS-CONNECTION-TIMEOUT
-            key: CONNECTION_TIMEOUT
-          - objName: OXZKVSD-IE-PS-LIFETIME-MAX
-            key: LIFETIME_MAX
-          - objName: OXZKVSD-IE-SERVER-SMTP
-            key: SERVER_SMTP
-          - objName: OXZKVSD-IE-HIKARI-DRIVER
+          - objName: OXZKVSD-FCTPE-JDBC
+            key: FCTPE_JDBC
+          - objName: OXZKVSD-FCTPE-TPEUSER-USR
+            key: FCTPE_TPEUSER_USR
+          - objName: OXZKVSD-FCTPE-TPEUSER-PASS
+            key: FCTPE_TPEUSER_PASS
+          - objName: OXZKVSD-BP-HIKARI-DRIVER
             key: HIKARI_DRIVER
-          - objName: OXZKVSD-IE-SWAGGER-ENABLED
+          - objName: OXZKVSD-BP-SWAGGER-ENABLED
             key: SWAGGER_ENABLED
-          providerSecretName: portal-boton-panico-secrets
+          - objName: OXZKVSD-BP-TPE-POOL-SIZE-MAX
+            key: POOL_SIZE_MAX
+          - objName: OXZKVSD-BP-TPE-IDLE-MIN
+            key: IDLE_MIN
+          providerSecretName: tpe-config-services-secrets
           providerKeyvaultName: OXZKVMDPD01
           providerClassName: pb-azure-kv
         imagePullSecrets:
