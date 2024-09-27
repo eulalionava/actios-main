@@ -42,7 +42,7 @@ app:
         - secretRef:
             name: tpe-config-services-secrets
         image:
-          repository: oxzacrmdps01.azurecr.io/oxzacrmdps01/tiendas-services
+          repository: oxzacrmdps01.azurecr.io/oxzacrmdps01/tpe-config-services
         replicaCount: 1
         serviceAccount:
           name: "default"
@@ -61,7 +61,7 @@ app:
             readOnly: true
             path: /mnt/secrets-store
             secretProviderClass: pb-azure-kv
-            secretProviderCreds: tiendas-services-store-creds
+            secretProviderCreds: tpe-config-services-store-creds
         configmaps:
           list: []
         secrets:
