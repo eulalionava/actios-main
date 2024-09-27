@@ -75,7 +75,7 @@ app:
             key: FCIAS_XXBOP_USR
           - objName: OXZKVSD-FCIAS-XXBOP-PASS
             key: FCIAS_XXBOP_PASS
-          - objName: OXZKVSD-BP-SB-POOL-SIZE_MAX
+          - objName: OXZKVSD-BP-SB-POOL-SIZE-MAX
             key: POOL_SIZE_MAX
           - objName: OXZKVSD-BP-SB-IDLE-MIN
             key: IDLE_MIN
