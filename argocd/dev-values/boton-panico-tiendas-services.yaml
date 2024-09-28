@@ -1,7 +1,7 @@
 nameOverride: ""
 fullnameOverride: ""
 extraLabels:
-  - app: tiendas-services
+  - app: boton-panico-tiendas-services
   - env: dev
   - component: backend
 crnamespace: openshift-gitops
@@ -17,7 +17,7 @@ app:
     url: http://20.118.83.132:8081/repository/helm/
     revision: 0.1.11
     values:
-        nameOverride: "tiendas-services-dev"
+        nameOverride: ""
         routeHostOverride: boton-panico-dev.apps.oxzaromdp01.southcentralus.aroapp.io
         routePathPrefix: /tiendas-services
         # livenessProbe: 
@@ -42,15 +42,15 @@ app:
         - secretRef:
             name: tiendas-services-secrets
         image:
-          repository: oxzacrmdps01.azurecr.io/oxzacrmdps01/tiendas-services
+          repository: oxzacrmdps01.azurecr.io/oxzacrmdps01/boton-panico-tiendas-services
         replicaCount: 1
         serviceAccount:
           name: "default"
         extraLabels:
           - app.openshift.io/runtime: spring-boot
-          - app.kubernetes.io/part-of: tiendas-services
-          - app.openshift.io/part-off: tiendas-services
-          - portal: tiendas-services
+          - app.kubernetes.io/part-of: boton-panico-tiendas-services
+          - app.openshift.io/part-off: boton-panico-tiendas-services
+          - portal: boton-panico
           - env: dev
           - component: backend
         containerVolumes:

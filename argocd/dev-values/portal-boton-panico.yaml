@@ -17,7 +17,7 @@ app:
     url: http://20.118.83.132:8081/repository/helm/
     revision: 0.1.11
     values:
-        nameOverride: "portal-boton-panico-dev"
+        nameOverride: ""
         routeHostOverride: boton-panico-dev.apps.oxzaromdp01.southcentralus.aroapp.io
         routePathPrefix: /PortalBotonPanicoV2
         # livenessProbe: 
@@ -50,7 +50,7 @@ app:
           - app.openshift.io/runtime: nodejs
           - app.kubernetes.io/part-of: portal-boton-panico
           - app.openshift.io/part-off: portal-boton-panico
-          - portal: portal-boton-panico
+          - portal: boton-panico
           - env: dev
           - component: backend
         containerVolumes:
