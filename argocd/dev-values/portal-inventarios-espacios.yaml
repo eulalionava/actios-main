@@ -7,7 +7,7 @@ extraLabels:
 crnamespace: openshift-gitops
 app:
   destination:
-    namespace: boton-panico
+    namespace: inventario-espacios
     server: 'https://kubernetes.default.svc'
   project: default
   type: helm
@@ -48,9 +48,9 @@ app:
           name: "default"
         extraLabels:
           - app.openshift.io/runtime: nodejs
-          - app.kubernetes.io/part-of: porta-inventario-espacios
-          - app.openshift.io/part-off: porta-inventario-espacios
-          - portal: porta-inventario-espacios
+          - app.kubernetes.io/part-of: portal-inventario-espacios
+          - app.openshift.io/part-off: portal-inventario-espacios
+          - portal: portal-inventario-espacios
           - env: dev
           - component: backend
         containerVolumes:
