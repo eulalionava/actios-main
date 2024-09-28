@@ -1,7 +1,7 @@
 nameOverride: ""
 fullnameOverride: ""
 extraLabels:
-  - app: PROJECT_KEY
+  - app: inventario-espacios
   - env: infra-dev
 crnamespace: openshift-gitops
 app:
@@ -20,18 +20,18 @@ app:
         create: true
         annotations: {}
         name: "portales"
-        namespace: PROJECT_KEY
+        namespace: inventario-espacios
         local: true
       project:
         create: "true"
-        name: "PROJECT_KEY"
-        display: "PROJECT_DESCRIPTION"
+        name: "inventario-espacios"
+        display: "Portal InvetarioEspacios Modernizacion Fase 2"
         privileged: "true"
       bindings:
         create: "true"
         list:
         - name: secret-create
-          namespace: PROJECT_KEY
+          namespace: inventario-espacios
           local: true
           extraLabels: 
             app: k8s-secrets-store
