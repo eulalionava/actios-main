@@ -17,7 +17,7 @@ app:
     url: http://20.118.83.132:8081/repository/helm/
     revision: 0.1.11
     values:
-        nameOverride: "portal-inventario-espacios-dev"
+        nameOverride: ""
         routeHostOverride: inventario-espacios-dev.apps.oxzaromdp01.southcentralus.aroapp.io
         routePathPrefix: /PortalInventarioEspaciosV3
         # livenessProbe: 
