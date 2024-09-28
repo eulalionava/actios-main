@@ -72,10 +72,6 @@ inputs:
     description: "Optional app filter"
     required: false
     default: ".yaml"
-  project-key:
-    description: "Identificador del proyecto"
-    required: true
-    default: "project-info"
 runs:
   using: "composite"
   steps:
@@ -134,7 +130,7 @@ runs:
           fi 
           HLMSCRIPT+="-n ${{ inputs.openshift-namespace }} "
           HLMSCRIPT+="--debug --install --force --version ${{ inputs.helm-chart-version }} "
-          HLMSCRIPT+="${{ inputs.project-key }}${{ inputs.env-suffix }} ${{ inputs.helm-chart-repo }}/${{ inputs.helm-chart-name }} "
+          HLMSCRIPT+="${FILEE%%.*}${{ inputs.env-suffix }} ${{ inputs.helm-chart-repo }}/${{ inputs.helm-chart-name }} "
           echo "$HLMSCRIPT"
           bash -c "$HLMSCRIPT"
         done
