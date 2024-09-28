@@ -7,14 +7,6 @@ on:
         required: false
         type: string
         default: "4.6"
-      project-key:
-        description: "Identificador del proyecto(namespace dentro del cluster ARO)"
-        required: true
-        type: string
-      project-description:
-        description: "Una breve descripción del proyecto"
-        required: true
-        type: string
 
 permissions: write-all
 jobs:
@@ -72,18 +64,6 @@ jobs:
             if [ -z "${SECRETCONTENT}" ]; then exit 1; fi
             sed -i $FILE -e "s/$REPLACENAME/$SECRETCONTENT/g"
           done
-      - shell: bash
-        name: Replace Input Project Info
-        env:
-          SECRET_NAME: ${{ matrix.secrts }}
-        run: |
-          cd ./argocd/infra-values
-          for FILE in $(ls | grep '.yaml'); do
-            echo "Remplazando PROJECT_KEY: ${{ inputs.project-key }}"
-            sed -i $FILE -e "s/PROJECT_KEY/${{ inputs.project-key }}/g"
-            echo "Remplazando PROJECT_DESCRIPTION: ${{ inputs.project-description }}"
-            sed -i $FILE -e "s/PROJECT_DESCRIPTION/${{ inputs.project-description }}/g"
-          done
       - uses: actions/upload-artifact@v4
         with:
           name: argocd-infra-replaced-secrets
@@ -117,4 +97,3 @@ jobs:
           values-files-location: "./argocd/infra-values"
           include-tpl-files: true
           env-suffix: "-dev"
-          project-key: ${{ inputs.project-key }}
