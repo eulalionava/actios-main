@@ -6,7 +6,7 @@ app:
       - name: secrets.list[0].name
         value: azure-cr
       - name: secrets.list[0].namespace
-        value: inventario-espacios
+        value: boton-panico
       - name: secrets.list[0].assignSecret
         value: "false"
       - name: secrets.list[0].assignPull
