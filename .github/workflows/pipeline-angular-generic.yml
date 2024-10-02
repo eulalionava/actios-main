@@ -150,8 +150,7 @@ jobs:
           base-dir: ${{ inputs.base-dir }}
           base-href: "${{inputs.base-href}}"
           replace-envs: ${{ inputs.run-replace }}
-          backend-pedidos-endpoint: https://inventario-espacios-dev.apps.oxzaromdp01.southcentralus.aroapp.io/inventarioespaciosv3pedidosapi/
-          backend-admin-endpoint: https://inventario-espacios-dev.apps.oxzaromdp01.southcentralus.aroapp.io/inventarioespaciosv3adminapi/
+          backend-endpoint: ${{ env[env.backname] }}
           auth-endpoint: https://oxzasetpdev05.azurewebsites.net/AuthFemcoProxBack
           ac-start-endpoint: https://fcportaldes.femcom.net:8443/AuthFemcoProx
           git-sha: ${{ steps.sha.outputs.sha_short }}

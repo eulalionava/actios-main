@@ -21,12 +21,8 @@ inputs:
     required: false
     type: boolean
     default: false
-  backend-pedidos-endpoint:
-    description: "Backend pedidos endpoint parametrizado"
-    required: false
-    default: ""
-  backend-admin-endpoint:
-    description: "Backend admin endpoint parametrizado"
+  backend-endpoint:
+    description: "Backend endpoint parametrizado"
     required: false
     default: ""
   auth-endpoint:
@@ -49,9 +45,7 @@ runs:
       if: inputs.replace-envs
       run: |
         sed \
-          -e 's~apiUrlPedidos: .*~apiUrlPedidos: "${{ inputs.backend-pedidos-endpoint }}",~g' \
-          -e 's~apiUrlAdmin: .*~apiUrlAdmin: "${{ inputs.backend-admin-endpoint }}",~g' \
-          -e 's~apiUrlDefault: .*~apiUrlDefault: "${{ inputs.backend-admin-endpoint }}",~g' \
+          -e 's~backendBaseUrl: .*~backendBaseUrl: "${{ inputs.backend-endpoint }}",~g' \
           -e 's~apiBaseUrl: .*~apiBaseUrl: "${{ inputs.auth-endpoint }}",~g' \
           -e 's~startAC: .*~startAC: "${{ inputs.ac-start-endpoint }}",~g' \
           -e 's~version: .*~version: "${{ inputs.git-sha }}",~g' \
