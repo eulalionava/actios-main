@@ -42,7 +42,7 @@ runs:
       run: |
         sed \
           -e 's~apiUrlDefault: .*~apiUrlDefault: "${{ inputs.backend-admin-endpoint }}",~g' \
-          -e 's~apiBaseUrl: .*~apiBaseUrl: "${{ inputs.auth-endpoint }}",~g' \
+          -e 's~backendBaseUrl: .*~backendBaseUrl: "${{ inputs.auth-endpoint }}",~g' \
           -e 's~startAC: .*~startAC: "${{ inputs.ac-start-endpoint }}",~g' \
           -e 's~version: .*~version: "${{ inputs.git-sha }}",~g' \
           -i ${{ inputs.base-dir }}src/environments/environment.ts
