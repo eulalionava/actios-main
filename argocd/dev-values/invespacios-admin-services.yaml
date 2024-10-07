@@ -15,10 +15,11 @@ app:
   helm:
     chart: portales
     url: http://20.118.83.132:8081/repository/helm/
-    revision: 0.1.10
+    revision: 0.1.11
     values:
-        nameOverride: "inv-espacios-admin-services-dev"
-        routeHostOverride: inv-espacios-admin-services-dev-inventario-espacios.apps.oxzaromdp01.southcentralus.aroapp.io
+        nameOverride: ""
+        routeHostOverride: inventario-espacios-dev.apps.oxzaromdp01.southcentralus.aroapp.io
+        routePathPrefix: /inventarioespaciosv3adminapi
         # livenessProbe: 
         #     tcpSocket:
         #       port: 8080

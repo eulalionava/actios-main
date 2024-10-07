@@ -1,0 +1,173 @@
+name: Workflow Pipeline CI Frontend
+on:
+  workflow_call:
+    inputs:
+      docker-tag-prefix:
+        description: "Docker Tag Prefix"
+        required: true
+        type: string
+        default: dev-
+      run-unit-tests:
+        description: "true/false run unit tests"
+        required: false
+        type: string
+        default: "false"
+      docker-in-login:
+        description: "true/false run unit tests"
+        required: false
+        type: boolean
+        default: true
+      run-replace:
+        description: "replace values"
+        required: false
+        type: boolean
+        default: true
+      node-version:
+        description: "Node version"
+        required: false
+        type: string
+        default: "20.x"
+      keyvault-secret-list:
+        description: "Space Separated List of variables from Keyvault (compilation)"
+        required: false
+        type: string
+        default: ""
+      keyvault-name:
+        description: "Keyvault name"
+        required: false
+        type: string
+        default: "OXZKVMDPD01"
+      keyvault-secret-prefix:
+        description: "Prefix to remove on each secret"
+        required: false
+        type: string
+        default: "OXZKVSD-"
+      project-key:
+        description: "Project key, names the image name in ACR"
+        required: true
+        type: string
+        default: ""
+      base-dir:
+        description: "Base dir location for pom and Dockerfile"
+        required: false
+        type: string
+        default: "Frontend/"
+      docker-in-registry:
+        description: "login registry for pull images"
+        required: false
+        type: string
+        default: "registry.redhat.io"
+      base-href:
+        description: "Base href for app"
+        required: true
+        type: string
+      portal_id:
+        description: "2,3 Letter Portal ID"
+        required: true
+        type: string      
+    secrets:
+      azure-creds:
+        description: "Credentials for azure"
+        required: false
+      azure-client-id:
+        description: "Credentials for azure"
+        required: false
+      azure-client-secret:
+        description: "Credentials for azure"
+        required: false
+      azure-tenant-id:
+        description: "Credentials for azure"
+        required: false
+      docker-in-username:
+        description: "login username for pull images"
+        required: true
+      docker-in-password:
+        description: "login password for pull images"
+        required: true
+      docker-out-registry:
+        description: "login registry for push images"
+        required: true
+      docker-out-username:
+        description: "login username for push images"
+        required: true
+      docker-out-password:
+        description: "login password for push images"
+        required: true
+
+    outputs:
+      docker-final-tag: 
+        description: "Final Tag"
+        value: ${{ jobs.pipeline-ci.outputs.docker-final-tag }}
+permissions: write-all
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      runner: ${{ steps.checkunittests.outputs.runner }}
+    steps:
+    - name: Check unit tests
+      id: checkunittests
+      run: |
+        if [ "${{ inputs.run-unit-tests }}" = "true" ] ; then
+          echo "runner=GJAR" >> $GITHUB_OUTPUT
+        else
+          echo "runner=ubuntu-latest" >> $GITHUB_OUTPUT
+        fi
+  pipeline-ci:
+    name: Pipeline CI Frontend java
+    needs: [setup]
+    runs-on: ${{ needs.setup.outputs.runner }}
+    outputs:
+      docker-final-tag: ${{ steps.out.outputs.docker-final-tag }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - name: Setup npm and node
+        uses: BUS-BackOffice/WEB_CI_CD_F2OXXO/.github/actions/composite/common/setup-node@develop
+        with:
+          node-version: ${{ inputs.node-version }}
+      - name: Secrets
+        uses: BUS-BackOffice/WEB_CI_CD_F2OXXO/.github/actions/composite/azure/keyvault@develop
+        if: inputs.run-replace
+        with:
+          keyvault-name: ${{ inputs.keyvault-name }}
+          keyvault-secret-list: ${{ inputs.keyvault-secret-list }}
+          keyvault-prefix: ${{ inputs.keyvault-secret-prefix }}
+          azure-creds: ${{ secrets.azure-creds }}
+          azure-client-id: ${{ secrets.azure-client-id }}
+          azure-client-secret: ${{ secrets.azure-client-secret }}
+          azure-tenant-id: ${{ secrets.azure-tenant-id }}
+      - name: Backend Endpoint name
+        run: |
+          echo "backname=${{ inputs.portal_id }}_URL_BACK" >> $GITHUB_ENV
+      - name: Get SHA
+        id: sha
+        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+      - name: Build
+        uses: BUS-BackOffice/WEB_CI_CD_F2OXXO/.github/actions/composite/node/build@develop
+        with:
+          project-key: ${{ inputs.project-key }}
+          base-dir: ${{ inputs.base-dir }}
+          base-href: "${{inputs.base-href}}"
+          replace-envs: ${{ inputs.run-replace }}
+          backend-endpoint: ${{ env[env.backname] }}
+          auth-endpoint: https://oxzasetpdev05.azurewebsites.net/AuthFemcoProxBack
+          ac-start-endpoint: https://fcportaldes.femcom.net:8443/AuthFemcoProx
+          git-sha: ${{ steps.sha.outputs.sha_short }}
+      - name: Docker Push
+        uses: BUS-BackOffice/WEB_CI_CD_F2OXXO/.github/actions/composite/common/docker-push@develop
+        with:
+          project-key: ${{ inputs.project-key }}
+          docker-in-login: ${{ inputs.docker-in-login }}
+          docker-in-registry: ${{ inputs.docker-in-registry }}
+          docker-in-username: ${{ secrets.docker-in-username }}
+          docker-in-password: ${{ secrets.docker-in-password }}
+          docker-out-registry: ${{ secrets.docker-out-registry }}
+          docker-out-username: ${{ secrets.docker-out-username }}
+          docker-out-password: ${{ secrets.docker-out-password }}
+          docker-tag: ${{ inputs.docker-tag-prefix }}${{ steps.sha.outputs.sha_short }}
+          base-dir: ${{ inputs.base-dir }}
+          art-location: dist
+      - name: Output
+        id: out
+        run: echo "docker-final-tag=${{ inputs.docker-tag-prefix }}${{ steps.sha.outputs.sha_short }}" >> $GITHUB_OUTPUT

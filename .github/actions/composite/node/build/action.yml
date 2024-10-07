@@ -45,7 +45,7 @@ runs:
       if: inputs.replace-envs
       run: |
         sed \
-          -e 's~apiUrl: .*~apiUrl: "${{ inputs.backend-endpoint }}",~g' \
+          -e 's~backendBaseUrl: .*~backendBaseUrl: "${{ inputs.backend-endpoint }}",~g' \
           -e 's~apiBaseUrl: .*~apiBaseUrl: "${{ inputs.auth-endpoint }}",~g' \
           -e 's~startAC: .*~startAC: "${{ inputs.ac-start-endpoint }}",~g' \
           -e 's~version: .*~version: "${{ inputs.git-sha }}",~g' \
@@ -67,7 +67,7 @@ runs:
       run: |
         npm run build \
         --prefix ${INPUT_BASE_DIR} \
-        -- --base-href=${INPUT_BASE_HREF}
+        -- --base-href=${INPUT_BASE_HREF} --deploy-url=${INPUT_BASE_HREF}assets/
     - uses: actions/upload-artifact@v4
       with:
         name: ${{ inputs.project-key }}

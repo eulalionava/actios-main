@@ -1,0 +1,92 @@
+nameOverride: ""
+fullnameOverride: ""
+extraLabels:
+  - app: tpe-config-services
+  - env: dev
+  - component: backend
+crnamespace: openshift-gitops
+app:
+  destination:
+    namespace: boton-panico
+    server: 'https://kubernetes.default.svc'
+  project: default
+  type: helm
+  autosync: true
+  helm:
+    chart: portales
+    url: http://20.118.83.132:8081/repository/helm/
+    revision: 0.1.11
+    values:
+        nameOverride: ""
+        routeHostOverride: boton-panico-dev.apps.oxzaromdp01.southcentralus.aroapp.io
+        routePathPrefix: /tpeconfigV2
+        # livenessProbe: 
+        #     tcpSocket:
+        #       port: 8080
+        #     initialDelaySeconds: 10
+        #     timeoutSeconds: 1
+        #     periodSeconds: 10
+        #     successThreshold: 1
+        #     failureThreshold: 3
+        # readinessProbe:
+        #   httpGet:
+        #     path: /v3/api-docs
+        #     port: 8080
+        #     scheme: HTTP
+        #   initialDelaySeconds: 20
+        #   timeoutSeconds: 3
+        #   periodSeconds: 30
+        #   successThreshold: 1
+        #   failureThreshold: 3
+        envFrom:
+        - secretRef:
+            name: tpe-config-services-secrets
+        image:
+          repository: oxzacrmdps01.azurecr.io/oxzacrmdps01/tpe-config-services
+        replicaCount: 1
+        serviceAccount:
+          name: "default"
+        extraLabels:
+          - app.openshift.io/runtime: spring-boot
+          - app.kubernetes.io/part-of: tpe-config-services
+          - app.openshift.io/part-off: tpe-config-services
+          - portal: boton-panico
+          - env: dev
+          - component: backend
+        containerVolumes:
+          create: true
+          list:
+          - type: inline-secret-store
+            name: secrets-store-inline
+            readOnly: true
+            path: /mnt/secrets-store
+            secretProviderClass: pb-azure-kv
+            secretProviderCreds: tpe-config-services-store-creds
+        configmaps:
+          list: []
+        secrets:
+          create: true
+          createProvider: true
+          list: []
+          providerRefs:
+          - objName: OXZKVSD-FCTPE-JDBC
+            key: FCTPE_JDBC
+          - objName: OXZKVSD-FCTPE-TPEUSER-USR
+            key: FCTPE_TPEUSER_USR
+          - objName: OXZKVSD-FCTPE-TPEUSER-PASS
+            key: FCTPE_TPEUSER_PASS
+          - objName: OXZKVSD-BP-HIKARI-DRIVER
+            key: HIKARI_DRIVER
+          - objName: OXZKVSD-BP-SWAGGER-ENABLED
+            key: SWAGGER_ENABLED
+          - objName: OXZKVSD-BP-TPE-POOL-SIZE-MAX
+            key: POOL_SIZE_MAX
+          - objName: OXZKVSD-BP-TPE-IDLE-MIN
+            key: IDLE_MIN
+          providerSecretName: tpe-config-services-secrets
+          providerKeyvaultName: OXZKVMDPD01
+          providerClassName: pb-azure-kv
+        imagePullSecrets:
+          create: true
+          list: 
+          - name: azure-cr

@@ -1,7 +1,7 @@
 nameOverride: ""
 fullnameOverride: ""
 extraLabels:
-  - app: inventario-espacios-pedidos-services
+  - app: porta-inventario-espacios
   - env: dev
   - component: backend
 crnamespace: openshift-gitops
@@ -19,7 +19,7 @@ app:
     values:
         nameOverride: ""
         routeHostOverride: inventario-espacios-dev.apps.oxzaromdp01.southcentralus.aroapp.io
-        routePathPrefix: /inventarioespaciosv3pedidosapi
+        routePathPrefix: /PortalInventarioEspaciosV3
         # livenessProbe: 
         #     tcpSocket:
         #       port: 8080
@@ -40,17 +40,17 @@ app:
         #   failureThreshold: 3
         envFrom:
         - secretRef:
-            name: inv-espacios-pedidos-services-secrets
+            name: portal-inventario-espacios-secrets
         image:
-          repository: oxzacrmdps01.azurecr.io/oxzacrmdps01/invespacios-pedidos-services
+          repository: oxzacrmdps01.azurecr.io/oxzacrmdps01/portal-inventarios-espacios
         replicaCount: 1
         serviceAccount:
           name: "default"
         extraLabels:
-          - app.openshift.io/runtime: spring-boot
-          - app.kubernetes.io/part-of: inventario-espacios-pedidos-services
-          - app.openshift.io/part-off: inventario-espacios-pedidos-services
-          - portal: inventario-espacios-pedidos-services
+          - app.openshift.io/runtime: nodejs
+          - app.kubernetes.io/part-of: portal-inventario-espacios
+          - app.openshift.io/part-off: portal-inventario-espacios
+          - portal: portal-inventario-espacios
           - env: dev
           - component: backend
         containerVolumes:
@@ -61,7 +61,7 @@ app:
             readOnly: true
             path: /mnt/secrets-store
             secretProviderClass: pb-azure-kv
-            secretProviderCreds: inv-espacios-secrets-store-creds
+            secretProviderCreds: portal-inventarios-espacios-secrets-store-creds
         configmaps:
           list: []
         secrets:
@@ -97,7 +97,7 @@ app:
             key: HIKARI_DRIVER
           - objName: OXZKVSD-IE-SWAGGER-ENABLED
             key: SWAGGER_ENABLED
-          providerSecretName: inv-espacios-pedidos-services-secrets
+          providerSecretName: portal-inventario-espacios-secrets
           providerKeyvaultName: OXZKVMDPD01
           providerClassName: pb-azure-kv
         imagePullSecrets:

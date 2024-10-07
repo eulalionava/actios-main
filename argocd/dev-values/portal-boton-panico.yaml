@@ -1,13 +1,13 @@
 nameOverride: ""
 fullnameOverride: ""
 extraLabels:
-  - app: inventario-espacios-pedidos-services
+  - app: portal-boton-panico
   - env: dev
   - component: backend
 crnamespace: openshift-gitops
 app:
   destination:
-    namespace: inventario-espacios
+    namespace: boton-panico
     server: 'https://kubernetes.default.svc'
   project: default
   type: helm
@@ -18,8 +18,8 @@ app:
     revision: 0.1.11
     values:
         nameOverride: ""
-        routeHostOverride: inventario-espacios-dev.apps.oxzaromdp01.southcentralus.aroapp.io
-        routePathPrefix: /inventarioespaciosv3pedidosapi
+        routeHostOverride: boton-panico-dev.apps.oxzaromdp01.southcentralus.aroapp.io
+        routePathPrefix: /PortalBotonPanicoV2
         # livenessProbe: 
         #     tcpSocket:
         #       port: 8080
@@ -40,17 +40,17 @@ app:
         #   failureThreshold: 3
         envFrom:
         - secretRef:
-            name: inv-espacios-pedidos-services-secrets
+            name: portal-boton-panico-secrets
         image:
-          repository: oxzacrmdps01.azurecr.io/oxzacrmdps01/invespacios-pedidos-services
+          repository: oxzacrmdps01.azurecr.io/oxzacrmdps01/portal-boton-panico
         replicaCount: 1
         serviceAccount:
           name: "default"
         extraLabels:
-          - app.openshift.io/runtime: spring-boot
-          - app.kubernetes.io/part-of: inventario-espacios-pedidos-services
-          - app.openshift.io/part-off: inventario-espacios-pedidos-services
-          - portal: inventario-espacios-pedidos-services
+          - app.openshift.io/runtime: nodejs
+          - app.kubernetes.io/part-of: portal-boton-panico
+          - app.openshift.io/part-off: portal-boton-panico
+          - portal: boton-panico
           - env: dev
           - component: backend
         containerVolumes:
@@ -61,7 +61,7 @@ app:
             readOnly: true
             path: /mnt/secrets-store
             secretProviderClass: pb-azure-kv
-            secretProviderCreds: inv-espacios-secrets-store-creds
+            secretProviderCreds: portal-boton-panico-secrets-store-creds
         configmaps:
           list: []
         secrets:
@@ -97,7 +97,7 @@ app:
             key: HIKARI_DRIVER
           - objName: OXZKVSD-IE-SWAGGER-ENABLED
             key: SWAGGER_ENABLED
-          providerSecretName: inv-espacios-pedidos-services-secrets
+          providerSecretName: portal-boton-panico-secrets
           providerKeyvaultName: OXZKVMDPD01
           providerClassName: pb-azure-kv
         imagePullSecrets:

@@ -1,0 +1,22 @@
+app:
+  helm:
+    params:
+      - name: image.tag
+        value: %FINAL_TAG%
+      - name: configmaps.create
+        value: "true"
+      - name: configmaps.list[0].name
+        value: tiendas-services-configmap
+      - name: configmaps.list[0].data.PORTAL_VERSION
+        value: %FINAL_TAG%
+
+      - name: secrets.list[0].name
+        value: tiendas-services-store-creds
+      - name: secrets.list[0].type
+        value: Opaque
+      - name: secrets.list[0].stringData.clientid
+        value: %JAR_AZURE_KEYVAULT_CLIENTID_DEV%
+      - name: secrets.list[0].stringData.clientsecret
+        value: %JAR_AZURE_KEYVAULT_CLIENTSECRET_DEV%
+      - name: secrets.providerTenant
+        value: %JAR_AZURE_KEYVAULT_TENANTID_DEV%

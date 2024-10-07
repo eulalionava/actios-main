@@ -1,13 +1,13 @@
 nameOverride: ""
 fullnameOverride: ""
 extraLabels:
-  - app: inventario-espacios-pedidos-services
+  - app: boton-panico-tiendas-services
   - env: dev
   - component: backend
 crnamespace: openshift-gitops
 app:
   destination:
-    namespace: inventario-espacios
+    namespace: boton-panico
     server: 'https://kubernetes.default.svc'
   project: default
   type: helm
@@ -18,8 +18,8 @@ app:
     revision: 0.1.11
     values:
         nameOverride: ""
-        routeHostOverride: inventario-espacios-dev.apps.oxzaromdp01.southcentralus.aroapp.io
-        routePathPrefix: /inventarioespaciosv3pedidosapi
+        routeHostOverride: boton-panico-dev.apps.oxzaromdp01.southcentralus.aroapp.io
+        routePathPrefix: /tiendasapiV2
         # livenessProbe: 
         #     tcpSocket:
         #       port: 8080
@@ -40,17 +40,17 @@ app:
         #   failureThreshold: 3
         envFrom:
         - secretRef:
-            name: inv-espacios-pedidos-services-secrets
+            name: tiendas-services-secrets
         image:
-          repository: oxzacrmdps01.azurecr.io/oxzacrmdps01/invespacios-pedidos-services
+          repository: oxzacrmdps01.azurecr.io/oxzacrmdps01/boton-panico-tiendas-services
         replicaCount: 1
         serviceAccount:
           name: "default"
         extraLabels:
           - app.openshift.io/runtime: spring-boot
-          - app.kubernetes.io/part-of: inventario-espacios-pedidos-services
-          - app.openshift.io/part-off: inventario-espacios-pedidos-services
-          - portal: inventario-espacios-pedidos-services
+          - app.kubernetes.io/part-of: boton-panico-tiendas-services
+          - app.openshift.io/part-off: boton-panico-tiendas-services
+          - portal: boton-panico
           - env: dev
           - component: backend
         containerVolumes:
@@ -61,7 +61,7 @@ app:
             readOnly: true
             path: /mnt/secrets-store
             secretProviderClass: pb-azure-kv
-            secretProviderCreds: inv-espacios-secrets-store-creds
+            secretProviderCreds: tiendas-services-store-creds
         configmaps:
           list: []
         secrets:
@@ -69,35 +69,23 @@ app:
           createProvider: true
           list: []
           providerRefs:
-          - objName: OXZKVSD-IE-SERVICE-IMAGE-URL
-            key: SERVICE_IMAGE_URL
-          - objName: OXZKVSD-IE-SERVICE-SECURIT-URL
-            key: SERVICE_SECURITY_URL
-          - objName: OXZKVSD-IE-SERVICE-USER-DEFAULT
-            key: SERVICE_USER_DEFAULT
           - objName: OXZKVSD-FCIAS-JDBC
             key: FCIAS_JDBC
-          - objName: OXZKVSD-FCIAS-IE-XXINE-USR
-            key: FCIAS_IE_XXINE_USR
-          - objName: OXZKVSD-FCIAS-IE-XXINE-PASS
-            key: FCIAS_IE_XXINE_PASS
-          - objName: OXZKVSD-IE-PS-POOL-SIZE-MAX
-            key: POOL_SIZE_MAX
-          - objName: OXZKVSD-IE-PS-IDLE-MIN
-            key: IDLE_MIN
-          - objName: OXZKVSD-IE-PS-IDLE-TIMEOUT
-            key: IDLE_TIMEOUT
-          - objName: OXZKVSD-IE-PS-CONNECTION-TIMEOUT
-            key: CONNECTION_TIMEOUT
-          - objName: OXZKVSD-IE-PS-LIFETIME-MAX
-            key: LIFETIME_MAX
-          - objName: OXZKVSD-IE-SERVER-SMTP
-            key: SERVER_SMTP
-          - objName: OXZKVSD-IE-HIKARI-DRIVER
+          - objName: OXZKVSD-FCIAS-TIENDASVIEW-USR
+            key: FCIAS_TIENDASVIEW_USR
+          - objName: OXZKVSD-FCIAS-TIENDASVIEW-PASS
+            key: FCIAS_TIENDASVIEW_PASS
+          - objName: OXZKVSD-TS-HIKARI-DRIVER
             key: HIKARI_DRIVER
-          - objName: OXZKVSD-IE-SWAGGER-ENABLED
+          - objName: OXZKVSD-TS-SWAGGER-ENABLED
             key: SWAGGER_ENABLED
-          providerSecretName: inv-espacios-pedidos-services-secrets
+          - objName: OXZKVSD-TS-POOL-SIZE-MAX
+            key: POOL_SIZE_MAX
+          - objName: OXZKVSD-TS-IDLE-MIN
+            key: IDLE_MIN
+          - objName: OXZKVSD-BP-SECURITY-URL
+            key: SECURITY_URL
+          providerSecretName: tiendas-services-secrets
           providerKeyvaultName: OXZKVMDPD01
           providerClassName: pb-azure-kv
         imagePullSecrets:
