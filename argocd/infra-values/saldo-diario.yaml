@@ -1,0 +1,45 @@
+nameOverride: ""
+fullnameOverride: ""
+extraLabels:
+  - app: saldo-diario
+  - env: infra-dev
+crnamespace: openshift-gitops
+app:
+  destination:
+    namespace: openshift-gitops
+    server: 'https://kubernetes.default.svc'
+  project: default
+  type: helm
+  autosync: true
+  helm:
+    chart: helm-infra
+    url: http://20.118.83.132:8081/repository/helm/
+    revision: 0.0.5
+    values:
+      serviceAccount:
+        create: true
+        annotations: {}
+        name: "portales"
+        namespace: saldo-diario
+        local: true
+      project:
+        create: "true"
+        name: "saldo-diario"
+        display: "Portal Saldo Diario Modernización Fase 2"
+        privileged: "true"
+      bindings:
+        create: "true"
+        list:
+        - name: secret-create
+          namespace: saldo-diario
+          local: true
+          extraLabels: 
+            app: k8s-secrets-store
+          subjects:
+          - kind: ServiceAccount
+            name: secrets-store-csi-driver
+            namespace: k8s-secrets-store-csi
+          roleRef:
+            apiGroup: rbac.authorization.k8s.io
+            kind: ClusterRole
+            name: secret-create
