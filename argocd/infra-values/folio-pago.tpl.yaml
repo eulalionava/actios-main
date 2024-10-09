@@ -1,0 +1,18 @@
+app:
+  helm:
+    params:
+      - name: secrets.create
+        value: "true"
+      - name: secrets.list[0].name
+        value: azure-cr
+      - name: secrets.list[0].namespace
+        value: folio-pago
+      - name: secrets.list[0].assignSecret
+        value: "false"
+      - name: secrets.list[0].assignPull
+        value: "true"
+      - name: secrets.list[0].type
+        value: kubernetes.io/dockerconfigjson
+      - name: 'secrets.list[0].data.\.dockerconfigjson'
+        value: %JAR_AZURE_CR_DOCKERCONFIG_DEV%
+        forceString: true
