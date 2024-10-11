@@ -52,7 +52,7 @@ app:
           - app.openshift.io/part-off: portal-folio-pago
           - portal: folio-pago
           - env: dev
-          - component: backend
+          - component: frontend
         containerVolumes:
           create: true
           list:
