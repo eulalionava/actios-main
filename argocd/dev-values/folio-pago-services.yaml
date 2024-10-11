@@ -1,7 +1,7 @@
 nameOverride: ""
 fullnameOverride: ""
 extraLabels:
-  - app: portal-folio-pago
+  - app: folio-pago-services
   - env: dev
   - component: backend
 crnamespace: openshift-gitops
@@ -19,40 +19,40 @@ app:
     values:
         nameOverride: ""
         routeHostOverride: folio-pago-dev.apps.oxzaromdp01.southcentralus.aroapp.io
-        routePathPrefix: /folioPagoV2
+        routePathPrefix: /foliopagoapiV2
         # livenessProbe: 
-        #     tcpSocket:
-        #       port: 8080
-        #     initialDelaySeconds: 10
-        #     timeoutSeconds: 1
-        #     periodSeconds: 10
-        #     successThreshold: 1
-        #     failureThreshold: 3
+        #   tcpSocket:
+        #     port: 8080
+        #   initialDelaySeconds: 60
+        #   timeoutSeconds: 20
+        #   periodSeconds: 10
+        #   successThreshold: 1
+        #   failureThreshold: 3
         # readinessProbe:
         #   httpGet:
-        #     path: /v3/api-docs
+        #     path: /botonapiV2/actuator/health
         #     port: 8080
         #     scheme: HTTP
-        #   initialDelaySeconds: 20
-        #   timeoutSeconds: 3
+        #   initialDelaySeconds: 60
+        #   timeoutSeconds: 20
         #   periodSeconds: 30
         #   successThreshold: 1
         #   failureThreshold: 3
         envFrom:
         - secretRef:
-            name: portal-folio-pago-secrets
+            name: folio-pago-services-secrets
         image:
-          repository: oxzacrmdps01.azurecr.io/oxzacrmdps01/portal-folio-pago
+          repository: oxzacrmdps01.azurecr.io/oxzacrmdps01/folio-pago-services
         replicaCount: 1
         serviceAccount:
           name: "default"
         extraLabels:
-          - app.openshift.io/runtime: nodejs
-          - app.kubernetes.io/part-of: portal-folio-pago
-          - app.openshift.io/part-off: portal-folio-pago
+          - app.openshift.io/runtime: spring-boot
+          - app.kubernetes.io/part-of: folio-pago-services
+          - app.openshift.io/part-off: folio-pago-services
           - portal: folio-pago
           - env: dev
-          - component: frontend
+          - component: backend
         containerVolumes:
           create: true
           list:
@@ -61,7 +61,7 @@ app:
             readOnly: true
             path: /mnt/secrets-store
             secretProviderClass: pb-azure-kv
-            secretProviderCreds: portal-folio-pago-secrets-store-creds
+            secretProviderCreds: folio-pago-services-store-creds
         configmaps:
           list: []
         secrets:
@@ -69,35 +69,33 @@ app:
           createProvider: true
           list: []
           providerRefs:
-          - objName: OXZKVSD-IE-SERVICE-IMAGE-URL
-            key: SERVICE_IMAGE_URL
-          - objName: OXZKVSD-IE-SERVICE-SECURIT-URL
-            key: SERVICE_SECURITY_URL
-          - objName: OXZKVSD-IE-SERVICE-USER-DEFAULT
-            key: SERVICE_USER_DEFAULT
           - objName: OXZKVSD-FCIAS-JDBC
             key: FCIAS_JDBC
-          - objName: OXZKVSD-FCIAS-IE-XXINE-USR
-            key: FCIAS_IE_XXINE_USR
-          - objName: OXZKVSD-FCIAS-IE-XXINE-PASS
-            key: FCIAS_IE_XXINE_PASS
-          - objName: OXZKVSD-IE-PS-POOL-SIZE-MAX
+          - objName: OXZKVSD-FCIAS-XXBOP-USR
+            key: FCIAS_XXBOP_USR
+          - objName: OXZKVSD-FCIAS-XXBOP-PASS
+            key: FCIAS_XXBOP_PASS
+          - objName: OXZKVSD-BP-SB-POOL-SIZE-MAX
             key: POOL_SIZE_MAX
-          - objName: OXZKVSD-IE-PS-IDLE-MIN
+          - objName: OXZKVSD-BP-SB-IDLE-MIN
             key: IDLE_MIN
-          - objName: OXZKVSD-IE-PS-IDLE-TIMEOUT
+          - objName: OXZKVSD-BP-SB-IDLE-TIMEOUT
             key: IDLE_TIMEOUT
-          - objName: OXZKVSD-IE-PS-CONNECTION-TIMEOUT
+          - objName: OXZKVSD-BP-SB-CONNECTION-TIMEOUT
             key: CONNECTION_TIMEOUT
-          - objName: OXZKVSD-IE-PS-LIFETIME-MAX
+          - objName: OXZKVSD-BP-SB-LIFETIME-MAX
             key: LIFETIME_MAX
-          - objName: OXZKVSD-IE-SERVER-SMTP
-            key: SERVER_SMTP
-          - objName: OXZKVSD-IE-HIKARI-DRIVER
-            key: HIKARI_DRIVER
-          - objName: OXZKVSD-IE-SWAGGER-ENABLED
+          - objName: OXZKVSD-BP-SB-DEFAULT-STORE-SERVICE-BASE-PATH
+            key: DEFAULT_STORE_SERVICE_BASE_PATH
+          - objName: OXZKVSD-BP-SB-TPE-SERVICE-PATH
+            key: TPE_SERVICE_PATH
+          - objName: OXZKVSD-BP-SECURITY-URL
+            key: SECURITY_URL
+          - objName: OXZKVSD-BP-SWAGGER-ENABLED
             key: SWAGGER_ENABLED
-          providerSecretName: portal-folio-pago-secrets
+          - objName: OXZKVSD-BP-HIKARI-DRIVER
+            key: HIKARI_DRIVER
+          providerSecretName: folio-pago-services-secrets
           providerKeyvaultName: OXZKVMDPD01
           providerClassName: pb-azure-kv
         imagePullSecrets:
@@ -107,12 +105,12 @@ app:
         resources: 
           limits:
             cpu: "1"
-            memory: "2Gi"
+            memory: "4Gi"
           requests:
             cpu: "1"
-            memory: "2Gi"
+            memory: "4Gi"
         autoscaling:
           enabled: true
           minReplicas: 1
           maxReplicas: 3
-          targetMemoryUtilizationPercentage: 80
+          targetCPUUtilizationPercentage: 80

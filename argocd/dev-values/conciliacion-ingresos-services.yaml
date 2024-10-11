@@ -1,0 +1,116 @@
+nameOverride: ""
+fullnameOverride: ""
+extraLabels:
+  - app: conciliacion-ingresos-services
+  - env: dev
+  - component: backend
+crnamespace: openshift-gitops
+app:
+  destination:
+    namespace: conciliacion-ingresos
+    server: 'https://kubernetes.default.svc'
+  project: default
+  type: helm
+  autosync: true
+  helm:
+    chart: portales
+    url: http://20.118.83.132:8081/repository/helm/
+    revision: 0.1.11
+    values:
+        nameOverride: ""
+        routeHostOverride: conciliacion-ingresos-dev.apps.oxzaromdp01.southcentralus.aroapp.io
+        routePathPrefix: /conciliacionIngresoapiV2
+        # livenessProbe: 
+        #   tcpSocket:
+        #     port: 8080
+        #   initialDelaySeconds: 60
+        #   timeoutSeconds: 20
+        #   periodSeconds: 10
+        #   successThreshold: 1
+        #   failureThreshold: 3
+        # readinessProbe:
+        #   httpGet:
+        #     path: /botonapiV2/actuator/health
+        #     port: 8080
+        #     scheme: HTTP
+        #   initialDelaySeconds: 60
+        #   timeoutSeconds: 20
+        #   periodSeconds: 30
+        #   successThreshold: 1
+        #   failureThreshold: 3
+        envFrom:
+        - secretRef:
+            name: conciliacion-ingresos-services-secrets
+        image:
+          repository: oxzacrmdps01.azurecr.io/oxzacrmdps01/conciliacion-ingresos-services
+        replicaCount: 1
+        serviceAccount:
+          name: "default"
+        extraLabels:
+          - app.openshift.io/runtime: spring-boot
+          - app.kubernetes.io/part-of: conciliacion-ingresos-services
+          - app.openshift.io/part-off: conciliacion-ingresos-services
+          - portal: conciliacion-ingresos
+          - env: dev
+          - component: backend
+        containerVolumes:
+          create: true
+          list:
+          - type: inline-secret-store
+            name: secrets-store-inline
+            readOnly: true
+            path: /mnt/secrets-store
+            secretProviderClass: pb-azure-kv
+            secretProviderCreds: conciliacion-ingresos-services-store-creds
+        configmaps:
+          list: []
+        secrets:
+          create: true
+          createProvider: true
+          list: []
+          providerRefs:
+          - objName: OXZKVSD-FCIAS-JDBC
+            key: FCIAS_JDBC
+          - objName: OXZKVSD-FCIAS-XXBOP-USR
+            key: FCIAS_XXBOP_USR
+          - objName: OXZKVSD-FCIAS-XXBOP-PASS
+            key: FCIAS_XXBOP_PASS
+          - objName: OXZKVSD-BP-SB-POOL-SIZE-MAX
+            key: POOL_SIZE_MAX
+          - objName: OXZKVSD-BP-SB-IDLE-MIN
+            key: IDLE_MIN
+          - objName: OXZKVSD-BP-SB-IDLE-TIMEOUT
+            key: IDLE_TIMEOUT
+          - objName: OXZKVSD-BP-SB-CONNECTION-TIMEOUT
+            key: CONNECTION_TIMEOUT
+          - objName: OXZKVSD-BP-SB-LIFETIME-MAX
+            key: LIFETIME_MAX
+          - objName: OXZKVSD-BP-SB-DEFAULT-STORE-SERVICE-BASE-PATH
+            key: DEFAULT_STORE_SERVICE_BASE_PATH
+          - objName: OXZKVSD-BP-SB-TPE-SERVICE-PATH
+            key: TPE_SERVICE_PATH
+          - objName: OXZKVSD-BP-SECURITY-URL
+            key: SECURITY_URL
+          - objName: OXZKVSD-BP-SWAGGER-ENABLED
+            key: SWAGGER_ENABLED
+          - objName: OXZKVSD-BP-HIKARI-DRIVER
+            key: HIKARI_DRIVER
+          providerSecretName: conciliacion-ingresos-services-secrets
+          providerKeyvaultName: OXZKVMDPD01
+          providerClassName: pb-azure-kv
+        imagePullSecrets:
+          create: true
+          list: 
+          - name: azure-cr
+        resources: 
+          limits:
+            cpu: "1"
+            memory: "4Gi"
+          requests:
+            cpu: "1"
+            memory: "4Gi"
+        autoscaling:
+          enabled: true
+          minReplicas: 1
+          maxReplicas: 3
+          targetCPUUtilizationPercentage: 80

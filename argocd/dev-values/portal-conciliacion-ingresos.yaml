@@ -1,13 +1,13 @@
 nameOverride: ""
 fullnameOverride: ""
 extraLabels:
-  - app: portal-saldo-diario
+  - app: portal-conciliacion-ingresos
   - env: dev
   - component: backend
 crnamespace: openshift-gitops
 app:
   destination:
-    namespace: saldo-diario
+    namespace: conciliacion-ingresos
     server: 'https://kubernetes.default.svc'
   project: default
   type: helm
@@ -18,8 +18,8 @@ app:
     revision: 0.1.11
     values:
         nameOverride: ""
-        routeHostOverride: saldo-diario-dev.apps.oxzaromdp01.southcentralus.aroapp.io
-        routePathPrefix: /saldoDiarioV2
+        routeHostOverride: conciliacion-ingresos-dev.apps.oxzaromdp01.southcentralus.aroapp.io
+        routePathPrefix: /conciliacionIngresoV2
         # livenessProbe: 
         #     tcpSocket:
         #       port: 8080
@@ -40,19 +40,19 @@ app:
         #   failureThreshold: 3
         envFrom:
         - secretRef:
-            name: portal-saldo-diario-secrets
+            name: portal-conciliacion-ingresos-secrets
         image:
-          repository: oxzacrmdps01.azurecr.io/oxzacrmdps01/portal-saldo-diario
+          repository: oxzacrmdps01.azurecr.io/oxzacrmdps01/portal-conciliacion-ingresos
         replicaCount: 1
         serviceAccount:
           name: "default"
         extraLabels:
           - app.openshift.io/runtime: nodejs
-          - app.kubernetes.io/part-of: portal-saldo-diario
-          - app.openshift.io/part-off: portal-saldo-diario
-          - portal: saldo-diario
+          - app.kubernetes.io/part-of: portal-conciliacion-ingresos
+          - app.openshift.io/part-off: portal-conciliacion-ingresos
+          - portal: conciliacion-ingresos
           - env: dev
-          - component: backend
+          - component: frontend
         containerVolumes:
           create: true
           list:
@@ -61,7 +61,7 @@ app:
             readOnly: true
             path: /mnt/secrets-store
             secretProviderClass: pb-azure-kv
-            secretProviderCreds: portal-saldo-diario-secrets-store-creds
+            secretProviderCreds: portal-conciliacion-ingresos-secrets-store-creds
         configmaps:
           list: []
         secrets:
@@ -97,7 +97,7 @@ app:
             key: HIKARI_DRIVER
           - objName: OXZKVSD-IE-SWAGGER-ENABLED
             key: SWAGGER_ENABLED
-          providerSecretName: portal-saldo-diario-secrets
+          providerSecretName: portal-conciliacion-ingresos-secrets
           providerKeyvaultName: OXZKVMDPD01
           providerClassName: pb-azure-kv
         imagePullSecrets:
@@ -115,4 +115,4 @@ app:
           enabled: true
           minReplicas: 1
           maxReplicas: 3
-          targetMemoryUtilizationPercentage: 80
+          targetCPUUtilizationPercentage: 80
