@@ -69,32 +69,30 @@ app:
           createProvider: true
           list: []
           providerRefs:
-          - objName: OXZKVSD-FCIAS-JDBC
+          - objName: OXZKVSD-FP-FCIAS-JDBC
             key: FCIAS_JDBC
-          - objName: OXZKVSD-FCIAS-XXBOP-USR
-            key: FCIAS_XXBOP_USR
-          - objName: OXZKVSD-FCIAS-XXBOP-PASS
-            key: FCIAS_XXBOP_PASS
-          - objName: OXZKVSD-BP-SB-POOL-SIZE-MAX
+          - objName: OXZKVSD-FP-FCIAS-PFPDAS-USR
+            key: FCIAS_FP_USR
+          - objName: OXZKVSD-FP-FCIAS-PFPDAS-PASS
+            key: FCIAS_FP_PASS
+          - objName: OXZKVSD-FP-POOL-SIZE-MAX
             key: POOL_SIZE_MAX
-          - objName: OXZKVSD-BP-SB-IDLE-MIN
+          - objName: OXZKVSD-FP-IDLE-MIN
             key: IDLE_MIN
-          - objName: OXZKVSD-BP-SB-IDLE-TIMEOUT
+          - objName: OXZKVSD-FP-IDLE-TIMEOUT
             key: IDLE_TIMEOUT
-          - objName: OXZKVSD-BP-SB-CONNECTION-TIMEOUT
+          - objName: OXZKVSD-FP-CONNECTION-TIMEOUT
             key: CONNECTION_TIMEOUT
-          - objName: OXZKVSD-BP-SB-LIFETIME-MAX
+          - objName: OXZKVSD-FP-LIFETIME-MAX
             key: LIFETIME_MAX
-          - objName: OXZKVSD-BP-SB-DEFAULT-STORE-SERVICE-BASE-PATH
-            key: DEFAULT_STORE_SERVICE_BASE_PATH
-          - objName: OXZKVSD-BP-SB-TPE-SERVICE-PATH
-            key: TPE_SERVICE_PATH
-          - objName: OXZKVSD-BP-SECURITY-URL
-            key: SECURITY_URL
-          - objName: OXZKVSD-BP-SWAGGER-ENABLED
-            key: SWAGGER_ENABLED
-          - objName: OXZKVSD-BP-HIKARI-DRIVER
+          - objName: OXZKVSD-FP-SERVER-SMTP
+            key: SERVER_SMTP
+          - objName: OXZKVSD-FP-HIKARI-DRIVER
             key: HIKARI_DRIVER
+          - objName: OXZKVSD-FP-SWAGGER-ENABLED
+            key: SWAGGER_ENABLED
+          - objName: OXZKVSD-FP-SECURITY-URL
+            key: SECURITY_URL
           providerSecretName: folio-pago-services-secrets
           providerKeyvaultName: OXZKVMDPD01
           providerClassName: pb-azure-kv
@@ -113,4 +111,4 @@ app:
           enabled: true
           minReplicas: 1
           maxReplicas: 3
-          targetCPUUtilizationPercentage: 80
+          targetMemoryUtilizationPercentage: 80

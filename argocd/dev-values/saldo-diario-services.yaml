@@ -69,32 +69,28 @@ app:
           createProvider: true
           list: []
           providerRefs:
-          - objName: OXZKVSD-FCIAS-JDBC
+          - objName: OXZKVSD-SD-FCIAS-JDBC
             key: FCIAS_JDBC
-          - objName: OXZKVSD-FCIAS-XXBOP-USR
-            key: FCIAS_XXBOP_USR
-          - objName: OXZKVSD-FCIAS-XXBOP-PASS
-            key: FCIAS_XXBOP_PASS
-          - objName: OXZKVSD-BP-SB-POOL-SIZE-MAX
-            key: POOL_SIZE_MAX
-          - objName: OXZKVSD-BP-SB-IDLE-MIN
-            key: IDLE_MIN
-          - objName: OXZKVSD-BP-SB-IDLE-TIMEOUT
-            key: IDLE_TIMEOUT
-          - objName: OXZKVSD-BP-SB-CONNECTION-TIMEOUT
-            key: CONNECTION_TIMEOUT
-          - objName: OXZKVSD-BP-SB-LIFETIME-MAX
-            key: LIFETIME_MAX
-          - objName: OXZKVSD-BP-SB-DEFAULT-STORE-SERVICE-BASE-PATH
-            key: DEFAULT_STORE_SERVICE_BASE_PATH
-          - objName: OXZKVSD-BP-SB-TPE-SERVICE-PATH
-            key: TPE_SERVICE_PATH
-          - objName: OXZKVSD-BP-SECURITY-URL
-            key: SECURITY_URL
-          - objName: OXZKVSD-BP-SWAGGER-ENABLED
+          - objName: OXZKVSD-SD-FCIAS-XXFC-USR
+            key: FCIAS_XXFC_USR
+          - objName: OXZKVSD-SD-FCIAS-XXFC-PASS
+            key: FCIAS_XXFC_PASS
+          - objName: OXZKVSD-SD-DATABASE-DRIVER
+            key: DATABASE_DRIVER
+          - objName: OXZKVSD-SD-FCDAS-JDBC
+            key: FCDAS_JDBC
+          - objName: OXZKVSD-SD-FCDAS-WEBSALDO-USR
+            key: FCDAS_WEBSALDO_USR
+          - objName: OXZKVSD-SD-FCDAS-WEBSALDO-PASS
+            key: FCDAS_WEBSALDO_USR
+          - objName: OXZKVSD-SD-FCDAS-WEBSALDO-PASS
+            key: FCDAS_WEBSALDO_PASS
+          - objName: OXZKVSD-SD-SWAGGER-ENABLED
             key: SWAGGER_ENABLED
-          - objName: OXZKVSD-BP-HIKARI-DRIVER
-            key: HIKARI_DRIVER
+          - objName: OXZKVSD-SD-SHOW-SQL
+            key: SHOW_SQL
+          - objName: OXZKVSD-SD-HIBERNATE-FETCH-FIZE
+            key: HIBERNATE_FETCH_FIZE
           providerSecretName: saldo-diario-services-secrets
           providerKeyvaultName: OXZKVMDPD01
           providerClassName: pb-azure-kv
@@ -113,4 +109,4 @@ app:
           enabled: true
           minReplicas: 1
           maxReplicas: 3
-          targetCPUUtilizationPercentage: 80
+          targetMemoryUtilizationPercentage: 80

@@ -69,32 +69,22 @@ app:
           createProvider: true
           list: []
           providerRefs:
-          - objName: OXZKVSD-FCIAS-JDBC
+          - objName: OXZKVSD-CI-FCIAS-JDBC
             key: FCIAS_JDBC
-          - objName: OXZKVSD-FCIAS-XXBOP-USR
-            key: FCIAS_XXBOP_USR
-          - objName: OXZKVSD-FCIAS-XXBOP-PASS
-            key: FCIAS_XXBOP_PASS
-          - objName: OXZKVSD-BP-SB-POOL-SIZE-MAX
-            key: POOL_SIZE_MAX
-          - objName: OXZKVSD-BP-SB-IDLE-MIN
-            key: IDLE_MIN
-          - objName: OXZKVSD-BP-SB-IDLE-TIMEOUT
-            key: IDLE_TIMEOUT
-          - objName: OXZKVSD-BP-SB-CONNECTION-TIMEOUT
-            key: CONNECTION_TIMEOUT
-          - objName: OXZKVSD-BP-SB-LIFETIME-MAX
-            key: LIFETIME_MAX
-          - objName: OXZKVSD-BP-SB-DEFAULT-STORE-SERVICE-BASE-PATH
-            key: DEFAULT_STORE_SERVICE_BASE_PATH
-          - objName: OXZKVSD-BP-SB-TPE-SERVICE-PATH
-            key: TPE_SERVICE_PATH
-          - objName: OXZKVSD-BP-SECURITY-URL
-            key: SECURITY_URL
-          - objName: OXZKVSD-BP-SWAGGER-ENABLED
-            key: SWAGGER_ENABLED
-          - objName: OXZKVSD-BP-HIKARI-DRIVER
+          - objName: OXZKVSD-CI-FCIAS-XXFC-USR
+            key: FCIAS_XXFC_USR
+          - objName: OXZKVSD-CI-FCIAS-XXFC-PASS
+            key: FCIAS_XXFC_PASS
+          - objName: OXZKVSD-CI-HIKARI-DRIVER
             key: HIKARI_DRIVER
+          - objName: OXZKVSD-CI-SWAGGER-ENABLED
+            key: SWAGGER_ENABLED
+          - objName: OXZKVSD-CI-POOL-SIZE-MAX
+            key: POOL_SIZE_MAX
+          - objName: OXZKVSD-CI-IDLE-MIN
+            key: IDLE_MIN
+          - objName: OXZKVSD-CI-SECURITY-URL
+            key: SECURITY_URL
           providerSecretName: conciliacion-ingresos-services-secrets
           providerKeyvaultName: OXZKVMDPD01
           providerClassName: pb-azure-kv
@@ -113,4 +103,4 @@ app:
           enabled: true
           minReplicas: 1
           maxReplicas: 3
-          targetCPUUtilizationPercentage: 80
+          targetMemoryUtilizationPercentage: 80
